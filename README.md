@@ -10,7 +10,7 @@ Data
 * data folder should be called "Data" and placed inside the folder "MultiAgentAI" in order to be ignored by gitignore
 
 
-code structure
+Code structure
 ----------------
 
 * Configs: Mainly the configs file containing a dictionary of all important parameters that are likely to be changed during training etc.

@@ -16,6 +16,7 @@ def make_static_configs():
         'local_or_server': 'local',  # 'local' OR 'server'
         'gpu_no': 0,  # integer 0-3    # select the GPU card
         'data_folder': 'Data',
+        'result_folder': 'Results',
 
 
 
