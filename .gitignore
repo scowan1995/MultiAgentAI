@@ -1,5 +1,6 @@
 # ignore data folder
 /Data
+/Results
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
