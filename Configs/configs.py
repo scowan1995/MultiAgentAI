@@ -1,7 +1,5 @@
-import time
-import re
+
 import os
-import pickle
 
 
 """
@@ -9,15 +7,21 @@ configs: List of configs the user mainly interacts with, such as hyperparameters
 """
 
 
-def make_static_configs():
+def make_statics_configs():
 
-    configs = {
+    statics = {
 
         'local_or_server': 'local',  # 'local' OR 'server'
         'gpu_no': 0,  # integer 0-3    # select the GPU card
-        'data_folder': 'Data',
-        'result_folder': 'Results',
+        'data': {'mock': '/Data/mock.csv', 'train': '/Data/train.csv', 'val': '/Data/validation.csv', 'test': '/Data/test.csv'},
+        'result_folder': '/Results',
 
+    }
+
+
+
+
+    configs = {
 
 
         # --- TRAINING ---
@@ -28,6 +32,8 @@ def make_static_configs():
 
     }
 
+    return statics, configs
+
 
 def configure_gpu(configs):
 
@@ -37,4 +43,4 @@ def configure_gpu(configs):
 
 
 
-configs = make_static_configs()
+statics, configs = make_statics_configs()
