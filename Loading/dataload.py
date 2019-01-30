@@ -16,7 +16,7 @@ import pandas as pd
 def load_data(data):
     """
 
-    :param data: statics['data']['mock']
+    :param data: statics['data']['mock'] path to data file
     :return: loaded pandas
     """
     data_pandas = pd.read_csv(data)
