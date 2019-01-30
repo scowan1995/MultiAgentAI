@@ -32,5 +32,5 @@ if __name__ == "__main__":
 
     data = os.path.abspath(__file__ + "/../../") + statics['data']['mock']
     data_pandas = load_data(data)
-    
+
     print(data_pandas)
