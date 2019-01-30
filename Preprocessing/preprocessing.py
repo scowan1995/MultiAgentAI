@@ -12,6 +12,6 @@ from Configs.configs import statics, configs
 
 if __name__ == "__main__":
 
-    print(statics['data_folder'])
+    print("preprocessing")
 
 

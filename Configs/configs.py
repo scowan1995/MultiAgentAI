@@ -14,7 +14,7 @@ def make_statics_configs():
         'local_or_server': 'local',  # 'local' OR 'server'
         'gpu_no': 0,  # integer 0-3    # select the GPU card
         'data': {'mock': '/Data/mock.csv', 'train': '/Data/train.csv', 'val': '/Data/validation.csv', 'test': '/Data/test.csv'},
-        'result_folder': '/Results',
+        'result': '/Results',
 
     }
 
