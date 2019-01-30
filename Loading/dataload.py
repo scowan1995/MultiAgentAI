@@ -30,7 +30,9 @@ def load_data(data):
 
 if __name__ == "__main__":
 
-    data = os.path.abspath(__file__ + "/../../") + statics['data']['mock']
-    data_pandas = load_data(data)
+    mock = load_data(os.path.abspath(__file__ + "/../../") + statics['data']['mock'])
+    #train = load_data(os.path.abspath(__file__ + "/../../") + statics['data']['train'])
+    #val = load_data(os.path.abspath(__file__ + "/../../") + statics['data']['val'])
+    #test = load_data(os.path.abspath(__file__ + "/../../") + statics['data']['test'])
 
-    print(data_pandas)
+    print(mock)
