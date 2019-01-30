@@ -35,4 +35,4 @@ if __name__ == "__main__":
     #val = load_data(os.path.abspath(__file__ + "/../../") + statics['data']['val'])
     #test = load_data(os.path.abspath(__file__ + "/../../") + statics['data']['test'])
 
-    print(mock)
+    #print(mock)
