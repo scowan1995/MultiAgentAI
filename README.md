@@ -7,7 +7,7 @@ General notes
 Data
 -------------
 
-* data folder should be called /data in order to be ignored by gitignore
+* data folder should be called "Data" and placed inside the folder "MultiAgentAI" in order to be ignored by gitignore
 
 
 code structure
