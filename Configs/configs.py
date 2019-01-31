@@ -23,8 +23,8 @@ def make_statics_configs():
 
         # --- Dataset and Loading ---
 
-        'mock': False,          # smaller mock dataset
-        'load_pickle': False,    # load full train and val set, but pickled and preprocessed version
+        'mock': True,          # smaller mock dataset
+        'load_pickle': True,    # load full train and val set, but pickled and preprocessed version
         'target' : 'click',     # 'payprice', 'bidprice'   # select the target
         'features': ['weekday', 'hour', 'bidid', 'userid', 'useragent', 'IP', 'region', 'city', 'adexchange', 'domain', 'url', 'urlid', 'slotid', 'slotwidth', 'slotheight', 'slotvisibility', 'slotformat', 'slotprice', 'creative', 'keypage', 'advertiser', 'usertag'], # select the data features
 

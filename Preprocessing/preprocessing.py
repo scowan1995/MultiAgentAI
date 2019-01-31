@@ -134,18 +134,18 @@ class Load_Preprocess(object):
 
             if configs['load_pickle']:
 
-                #try:
+                try:
 
-                self.features_num = pd.read_pickle(os.path.abspath(__file__ + "/../../Data/features_num"))
-                self.features = pd.read_pickle(os.path.abspath(__file__ + "/../../Data/features"))
-                self.targets = pd.read_pickle(os.path.abspath(__file__ + "/../../Data/targets"))
+                    self.features_num = pd.read_pickle(os.path.abspath(__file__ + "/../../Data/features_num"))
+                    self.features = pd.read_pickle(os.path.abspath(__file__ + "/../../Data/features"))
+                    self.targets = pd.read_pickle(os.path.abspath(__file__ + "/../../Data/targets"))
 
-                with open(os.path.abspath(__file__ + "/../../Data/mapping"), 'rb') as file:
-                    self.mapping = pickle.load(file)
+                    with open(os.path.abspath(__file__ + "/../../Data/mapping"), 'rb') as file:
+                        self.mapping = pickle.load(file)
 
-                #except:
+                except:
 
-                    #print('load_pickle should be set to False because the data has not been loaded yet')
+                    print('load_pickle should be set to False because the data has not been loaded yet')
 
             else:
 
