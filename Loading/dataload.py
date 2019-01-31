@@ -35,8 +35,16 @@ def feature_target(data):
     :return:
     """
 
-    targets = data['click'].astype('category')
-    features = pd.DataFrame(data.pop('click'))
+    targets = data[configs['target']].astype('category')
+
+    # drop target
+    features = pd.DataFrame(data)
+
+    #drop features and targets
+    for f in features.columns.values:
+        if f not in configs['features']:
+            features.pop(f)
+
 
     return features, targets
 

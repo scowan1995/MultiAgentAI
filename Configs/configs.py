@@ -21,15 +21,17 @@ def make_statics_configs():
 
     configs = {
 
-        # --- Dataset ---
+        # --- Dataset and Loading ---
 
-        'mock': False,
+        'mock': False,      # smaller mock dataset
+        'target' : 'click', # 'payprice', 'bidprice'   # select the target
+        'features': ['weekday', 'hour', 'bidid', 'userid', 'useragent', 'IP', 'region', 'city', 'adexchange', 'domain', 'url', 'urlid', 'slotid', 'slotwidth', 'slotheight', 'slotvisibility', 'slotformat', 'slotprice', 'creative', 'keypage', 'advertiser', 'usertag'], # select the data features
 
 
         # --- Logistic Regression ---
 
-        'logistic_regression': True,
-        'val_ratio': 0.2,
+        'logistic_regression': True,    # perform logistic regression
+        'val_ratio': 0.2,               # ratio train and validation set
 
 
         # --- Neural Network ---
