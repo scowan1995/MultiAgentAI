@@ -3,7 +3,6 @@ import os
 sys.path.append("../../")
 
 from Configs.configs import statics, configs
-from Loading.dataload import load_data, feature_target
 from Preprocessing.preprocessing import scale, numericalize
 
 
