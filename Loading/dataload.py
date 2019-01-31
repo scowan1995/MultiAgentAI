@@ -28,34 +28,7 @@ def load_data(data):
 
 
 
-def numericalize(data):
-    """
-    numericalizes categorical columns in pandas dataframe
-    :param data: pandas dataframe
-    :return: numericalized dataframe and mapping between numbers and previous categorical values
-    """
-    le = LabelEncoder()
-    le_mapping = dict()
-
-    for col in data.columns.values:
-
-        # Encoding only categorical variables
-        if data[col].dtypes == 'object':
-            # Using whole data to form an exhaustive list of levels
-
-            categoricals = data[col].append(data[col])
-            le.fit(categoricals.values.astype(str))
-            ## safe mapped data
-            data[col] = le.transform(data[col].astype(str))
-            ## safe mapping
-            le_mapping[col] = dict(zip(le.classes_, le.transform(le.classes_)))
-
-    return data, le_mapping
-
-
-
-
-def feature_label(data):
+def feature_target(data):
     """
     receives a dataframe and splits it up into features and targets
     :param data:
@@ -83,22 +56,7 @@ if __name__ == "__main__":
     #print("total samples:", len(dataset))
     #print("column_names", column_names)
 
-    train_features, train_targets = feature_label(dataset)
-    train_features_num, train_mapping = numericalize(train_features)
-
-
-    ## VAL______________________________________________________________________________
-
-    dataset = load_data(os.path.abspath(__file__ + "/../../") + statics['data']['val'])
-    column_names = list(dataset.columns.values)
-
-    # print("total samples:", len(dataset))
-    # print("column_names", column_names)
-
-    val_features, val_targets = feature_label(dataset)
-    val_features_num, val_mapping = numericalize(train_features)
-
-
+    train_features, train_targets = feature_target(dataset)
 
 
 

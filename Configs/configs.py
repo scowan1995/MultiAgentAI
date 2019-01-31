@@ -19,10 +19,9 @@ def make_statics_configs():
     }
 
 
-
-
     configs = {
 
+        'mock': True,
 
         # --- TRAINING ---
 
