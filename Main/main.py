@@ -25,7 +25,7 @@ if __name__ == "__main__":
 
     else:
 
-    ## TRAIN AND VAL________________________________________________________________
+    ## TRAIN AND VAL ________________________________________________________________
 
         train = load_data(os.path.abspath(__file__ + "/../../") + statics['data']['train'])
         val = load_data(os.path.abspath(__file__ + "/../../") + statics['data']['val'])

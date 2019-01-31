@@ -3,9 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="65986a77-ada3-4ed8-826d-b6d5f2fff4d1" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/Configs/configs.py" beforeDir="false" afterPath="$PROJECT_DIR$/Configs/configs.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Loading/dataload.py" beforeDir="false" afterPath="$PROJECT_DIR$/Loading/dataload.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Main/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Main/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Preprocessing/preprocessing.py" beforeDir="false" afterPath="$PROJECT_DIR$/Preprocessing/preprocessing.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Model/logistic_regression.py" beforeDir="false" afterPath="$PROJECT_DIR$/Model/logistic_regression.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -16,7 +15,8 @@
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/MultiAgentAI$preprocessing.coverage" NAME="preprocessing Coverage Results" MODIFIED="1548886939325" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Preprocessing" />
     <SUITE FILE_PATH="coverage/MultiAgentAI$dataload.coverage" NAME="dataload Coverage Results" MODIFIED="1548946420197" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Loading" />
-    <SUITE FILE_PATH="coverage/MultiAgentAI$main.coverage" NAME="main Coverage Results" MODIFIED="1548953066082" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Main" />
+    <SUITE FILE_PATH="coverage/MultiAgentAI$logistic_regression.coverage" NAME="logistic_regression Coverage Results" MODIFIED="1548953818158" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Model" />
+    <SUITE FILE_PATH="coverage/MultiAgentAI$main.coverage" NAME="main Coverage Results" MODIFIED="1548953553967" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Main" />
   </component>
   <component name="FUSProjectUsageTrigger">
     <session id="91634248">
@@ -43,26 +43,26 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="md" value="151" />
-          <entry key="py" value="2927" />
+          <entry key="py" value="3158" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="Markdown" value="151" />
-          <entry key="Python" value="2927" />
+          <entry key="Python" value="3158" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Configs/configs.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="203">
-              <caret line="23" column="20" selection-start-line="23" selection-start-column="20" selection-end-line="23" selection-end-column="20" />
+            <state relative-caret-position="136">
+              <caret line="27" column="24" selection-start-line="27" selection-start-column="24" selection-end-line="27" selection-end-column="24" />
               <folding>
-                <marker date="1548953099702" expanded="true" signature="158:160" ph="..." />
+                <marker date="1548953818154" expanded="true" signature="158:160" ph="..." />
               </folding>
             </state>
           </provider>
@@ -73,11 +73,11 @@
           <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Main/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="198">
-              <caret line="23" column="54" lean-forward="true" selection-start-line="23" selection-start-column="54" selection-end-line="23" selection-end-column="54" />
+            <state relative-caret-position="-188">
+              <caret line="5" selection-start-line="5" selection-end-line="8" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -111,8 +111,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Model/logistic_regression.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="330">
-              <caret line="22" lean-forward="true" selection-start-line="22" selection-end-line="22" />
+            <state relative-caret-position="690">
+              <caret line="46" column="41" lean-forward="true" selection-start-line="46" selection-start-column="41" selection-end-line="46" selection-end-column="41" />
               <folding>
                 <element signature="e#1#11#0" expanded="true" />
               </folding>
@@ -146,10 +146,10 @@
       <list>
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/Model/neural_network.py" />
-        <option value="$PROJECT_DIR$/Model/logistic_regression.py" />
         <option value="$PROJECT_DIR$/Preprocessing/preprocessing.py" />
         <option value="$PROJECT_DIR$/Loading/dataload.py" />
         <option value="$PROJECT_DIR$/Main/main.py" />
+        <option value="$PROJECT_DIR$/Model/logistic_regression.py" />
         <option value="$PROJECT_DIR$/Configs/configs.py" />
       </list>
     </option>
@@ -232,7 +232,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.main">
+  <component name="RunManager" selected="Python.logistic_regression">
     <configuration name="dataload" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="MultiAgentAI" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -247,6 +247,28 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Loading/dataload.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="logistic_regression" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="MultiAgentAI" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Model" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Model/logistic_regression.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -303,9 +325,11 @@
       <item itemvalue="Python.main" />
       <item itemvalue="Python.preprocessing" />
       <item itemvalue="Python.dataload" />
+      <item itemvalue="Python.logistic_regression" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.logistic_regression" />
         <item itemvalue="Python.main" />
         <item itemvalue="Python.dataload" />
         <item itemvalue="Python.preprocessing" />
@@ -416,16 +440,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Model/logistic_regression.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="22" lean-forward="true" selection-start-line="22" selection-end-line="22" />
-          <folding>
-            <element signature="e#1#11#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Preprocessing/preprocessing.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="62">
@@ -445,22 +459,32 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Main/main.py">
+    <entry file="file://$PROJECT_DIR$/Configs/configs.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="23" column="54" lean-forward="true" selection-start-line="23" selection-start-column="54" selection-end-line="23" selection-end-column="54" />
+        <state relative-caret-position="136">
+          <caret line="27" column="24" selection-start-line="27" selection-start-column="24" selection-end-line="27" selection-end-column="24" />
           <folding>
-            <element signature="e#0#9#0" expanded="true" />
+            <marker date="1548953818154" expanded="true" signature="158:160" ph="..." />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Configs/configs.py">
+    <entry file="file://$PROJECT_DIR$/Model/logistic_regression.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="203">
-          <caret line="23" column="20" selection-start-line="23" selection-start-column="20" selection-end-line="23" selection-end-column="20" />
+        <state relative-caret-position="690">
+          <caret line="46" column="41" lean-forward="true" selection-start-line="46" selection-start-column="41" selection-end-line="46" selection-end-column="41" />
           <folding>
-            <marker date="1548953099702" expanded="true" signature="158:160" ph="..." />
+            <element signature="e#1#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Main/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-188">
+          <caret line="5" selection-start-line="5" selection-end-line="8" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
           </folding>
         </state>
       </provider>

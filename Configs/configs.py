@@ -23,11 +23,9 @@ def make_statics_configs():
 
         'mock': True,
 
-        # --- TRAINING ---
+        # --- Logistic Regression ---
 
-        # --- VALIDATION ---
-
-        # --- TESTING ---
+        'val_ratio': 0.2,
 
     }
 
