@@ -36,9 +36,26 @@ def validate(logisticRegr, features, labels):
 
 
 
+## Class Logistic Regression
+
+class Logistic_Regression(object):
+
+    def __init__(self, features, targets):
+
+        self.features = features
+        self.targets = targets
+
+        train_features, val_features, train_labels, val_labels = train_val_split(features, targets)
+        self.logisticRegr = train_logRegression(train_features, train_labels)
+
+        self.score = validate(self.logisticRegr, val_features, val_labels)
+
+
+
 # main ______________________________________________________________________________________
 
 if __name__ == "__main__":
+
 
     dataset = load_data(os.path.abspath(__file__ + "/../../") + statics['data']['mock'])
     column_names = list(dataset.columns.values)

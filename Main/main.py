@@ -7,6 +7,9 @@ from Configs.configs import statics, configs
 from Loading.dataload import load_data, feature_target
 from Preprocessing.preprocessing import scale, numericalize
 
+from Model.logistic_regression import Logistic_Regression
+#from Model.neural_network import
+
 
 if __name__ == "__main__":
 
@@ -34,6 +37,15 @@ if __name__ == "__main__":
 
         features, targets = feature_target(train_val)
         features_num, mapping = numericalize(features)
+
+
+
+    ## MODEL________________________________________________________________________
+
+    if configs['logistic_regression']:
+
+        logistic_regression = Logistic_Regression(features_num, targets)
+        print(logistic_regression.score)
 
 
 

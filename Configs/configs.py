@@ -21,15 +21,24 @@ def make_statics_configs():
 
     configs = {
 
-        'mock': True,
+        # --- Dataset ---
+
+        'mock': False,
+
 
         # --- Logistic Regression ---
 
+        'logistic_regression': True,
         'val_ratio': 0.2,
+
+
+        # --- Neural Network ---
+
 
     }
 
     return statics, configs
+
 
 
 def configure_gpu(configs):
