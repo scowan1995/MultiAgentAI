@@ -6,6 +6,7 @@ sys.path.append("../")
 
 from Configs.configs import statics, configs
 from Preprocessing.preprocessing import Load_Preprocess
+from Model.data_exploration import Data_Exploration
 from Model.logistic_regression import Logistic_Regression
 #from Model.neural_network import
 
@@ -21,10 +22,16 @@ if __name__ == "__main__":
 
     ## MODEL________________________________________________________________________
 
+    if configs['data_exploration']:
+
+        data_exploration = Data_Exploration(data.mock_data)
+
     if configs['logistic_regression']:
 
-        logistic_regression = Logistic_Regression(data.features_num, data.targets)
+        logistic_regression = Logistic_Regression(data.mock_features_num, data.mock_targets)
         print(logistic_regression.score)
+
+
 
 
 

@@ -38,7 +38,7 @@ def feature_target(data):
     :return: features, targets of whole dataframe
     """
 
-    targets = data[configs['target']].astype('category')
+    targets = data[configs['target']] #.astype('category')
 
     # drop target
     features = pd.DataFrame(data)
@@ -119,16 +119,46 @@ class Load_Preprocess(object):
         if configs['mock'] == True:
 
             dataset = load_data(os.path.abspath(__file__ + "/../../") + statics['data']['mock'])
-            column_names = list(dataset.columns.values)
 
-            # print("total samples:", len(dataset))
-            # print("column_names", column_names)
-
-            self.features, self.targets = feature_target(dataset)
-            self.features_num, self.mapping = numericalize(self.features)
+            self.mock_data = dataset
+            self.mock_features, self.mock_targets = feature_target(dataset)
+            self.mock_features_num, self.mock_mapping = numericalize(self.mock_features)
 
 
-        else:
+        ## TRAIN ______________________________________________________________________________
+
+        if configs['train'] == True:
+
+            dataset = load_data(os.path.abspath(__file__ + "/../../") + statics['data']['train'])
+
+            self.train_data = dataset
+            self.train_features, self.train_targets = feature_target(dataset)
+            self.train_features_num, self.train_mapping = numericalize(self.train_features)
+
+
+        ## VAL ______________________________________________________________________________
+
+        if configs['val'] == True:
+
+            dataset = load_data(os.path.abspath(__file__ + "/../../") + statics['data']['val'])
+
+            self.val_data = dataset
+            self.val_features, self.val_targets = feature_target(dataset)
+            self.val_features_num, self.val_mapping = numericalize(self.val_features)
+
+
+        ## TEST ______________________________________________________________________________
+
+        if configs['test'] == True:
+
+            dataset = load_data(os.path.abspath(__file__ + "/../../") + statics['data']['test'])
+
+            self.test_data = dataset
+            self.test_features, self.test_targets = feature_target(dataset)
+            self.test_features_num, self.test_mapping = numericalize(self.test_features)
+
+
+        if configs['combine_train_val']:
 
             ## TRAIN AND VAL ________________________________________________________________
 
@@ -136,12 +166,12 @@ class Load_Preprocess(object):
 
                 try:
 
-                    self.features_num = pd.read_pickle(os.path.abspath(__file__ + "/../../Data/features_num"))
-                    self.features = pd.read_pickle(os.path.abspath(__file__ + "/../../Data/features"))
-                    self.targets = pd.read_pickle(os.path.abspath(__file__ + "/../../Data/targets"))
+                    self.train_val_features_num = pd.read_pickle(os.path.abspath(__file__ + "/../../Data/train_val_features_num"))
+                    self.train_val_features = pd.read_pickle(os.path.abspath(__file__ + "/../../Data/train_val_features"))
+                    self.train_val_targets = pd.read_pickle(os.path.abspath(__file__ + "/../../Data/train_val_targets"))
 
-                    with open(os.path.abspath(__file__ + "/../../Data/mapping"), 'rb') as file:
-                        self.mapping = pickle.load(file)
+                    with open(os.path.abspath(__file__ + "/../../Data/train_val_mapping"), 'rb') as file:
+                        self.train_val_mapping = pickle.load(file)
 
                 except:
 
@@ -149,20 +179,18 @@ class Load_Preprocess(object):
 
             else:
 
-                train = load_data(os.path.abspath(__file__ + "/../../") + statics['data']['train'])
-                val = load_data(os.path.abspath(__file__ + "/../../") + statics['data']['val'])
 
-                train_val = pd.concat([train, val], axis=0, sort=False)
+                self.train_val = pd.concat([self.train_data , self.val_data ], axis=0, sort=False)
 
-                self.features, self.targets = feature_target(train_val)
-                self.features_num, self.mapping = numericalize(self.features)
+                self.train_val_features, self.train_val_targets = feature_target(self.train_val)
+                self.train_val_features_num, self.train_val_mapping = numericalize(self.train_val_features)
 
-                self.features_num.to_pickle(os.path.abspath(__file__ + "/../../Data/features_num"))
-                self.features.to_pickle(os.path.abspath(__file__ + "/../../Data/features"))
-                self.targets.to_pickle(os.path.abspath(__file__ + "/../../Data/targets"))
+                self.train_val_features_num.to_pickle(os.path.abspath(__file__ + "/../../Data/train_val_features_num"))
+                self.train_val_features.to_pickle(os.path.abspath(__file__ + "/../../Data/train_val_features"))
+                self.train_val_targets.to_pickle(os.path.abspath(__file__ + "/../../Data/train_val_targets"))
 
-                with open(os.path.abspath(__file__ + "/../../Data/mapping"), 'wb') as file:
-                    pickle.dump(self.mapping, file, protocol=pickle.HIGHEST_PROTOCOL)
+                with open(os.path.abspath(__file__ + "/../../Data/train_val_mapping"), 'wb') as file:
+                    pickle.dump(self.train_val_mapping, file, protocol=pickle.HIGHEST_PROTOCOL)
 
                 print('data has been stored as pickle')
 
