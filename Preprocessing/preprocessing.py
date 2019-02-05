@@ -11,24 +11,15 @@ import pandas as pd
 import pickle
 
 
-
-
-
 def load_data(data):
     """
     loads the data from csv to pandas
     :param data: statics['data']['mock'] path to data file
     :return: loaded pandas
     """
-
     ## load data and fill all Null values with 0.0
     data_pandas = pd.read_csv(data, na_values=['Na', 'null']).fillna(0)
-
     return data_pandas
-
-
-
-
 
 
 def feature_target(data):
@@ -37,7 +28,6 @@ def feature_target(data):
     :param data: pandas dataframe of loaded csv
     :return: features, targets of whole dataframe
     """
-
     targets = data[configs['target']] #.astype('category')
 
     # drop target
@@ -48,13 +38,7 @@ def feature_target(data):
         if f not in configs['features']:
             features.pop(f)
 
-
     return features, targets
-
-
-
-
-
 
 
 def numericalize(data):
@@ -65,14 +49,10 @@ def numericalize(data):
     """
     le = LabelEncoder()
     le_mapping = dict()
-
     for col in data.columns.values:
-
         print("numericalizing", col)
-
         # Encoding only categorical variables
         if data[col].dtypes == 'object':
-
             # Using whole data to form an exhaustive list of levels
             categoricals = data[col].append(data[col])
             le.fit(categoricals.values.astype(str))
@@ -82,10 +62,6 @@ def numericalize(data):
             le_mapping[col] = dict(zip(le.classes_, le.transform(le.classes_)))
 
     return data, le_mapping
-
-
-
-
 
 
 def scale(data):
@@ -105,14 +81,11 @@ def scale(data):
 
 
 
-
-
 ## Class Data Loader and Preprocessing
 
 class Load_Preprocess(object):
 
     def __init__(self):
-
 
         ## MOCK ______________________________________________________________________________
 
