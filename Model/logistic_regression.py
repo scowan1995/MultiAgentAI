@@ -3,7 +3,7 @@ import os
 sys.path.append("../../")
 
 from Configs.configs import statics, configs
-from Preprocessing.preprocessing import scale, numericalize
+from Preprocessing.preprocessing import scale, numericalize, load_data, feature_target
 
 
 from sklearn.linear_model import LogisticRegression
@@ -33,7 +33,7 @@ class Logistic_Regression(object):
         self.features = features
         self.targets = targets
 
-train_features, val_features, train_labels, val_labels = train_val_split(features, targets)
+        train_features, val_features, train_labels, val_labels = train_val_split(features, targets)
         self.logisticRegr = train_logRegression(train_features, train_labels)
 
         self.score = validate(self.logisticRegr, val_features, val_labels)

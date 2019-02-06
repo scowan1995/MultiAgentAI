@@ -110,3 +110,7 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+assignment_description\.pdf
+
+\.idea/
