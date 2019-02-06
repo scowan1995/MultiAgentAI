@@ -1,6 +1,7 @@
 # ignore data folder
 /Data
 /Results
+.vscode
 
 # ignore DS store file
 .DS_Store
