@@ -1,51 +1,51 @@
 import sys
 import os
+import pandas as pd
+import pickle
+from Configs.configs import statics, configs
+from sklearn.preprocessing import LabelEncoder
 
 sys.path.append("../../")
 
-from Configs.configs import statics, configs
-from sklearn.preprocessing import LabelEncoder
-import pandas as pd
-import pickle
-
 
 # Class Data Loader and Preprocessing
-
 class SingleSet(object):
     def __init__(self, relative_path, use_numerical_labels=True):
+        self.data = None
+        self.data_features = None
+        self.data_targets = None
+        self.label_to_numerical_mapping = None
+
         try:
-            self = self.load_pickle(relative_path)
-        except:
-            self.data = self.load_data(relative_path)
-            self.data_features = None
-            self.data_targets = None
-            self.label_to_numerical_mapping = None
+            self.load_pickle(relative_path)
+        except FileNotFoundError:
+            self.load_data(relative_path)
 
             self.split_in_feature_and_target()
             if use_numerical_labels:
                 self.numericalize_labels()
 
             self.save_pickle(relative_path)
-            
+
         print("-- data loaded --")
 
-    @staticmethod
-    def load_data(dataset_rel_path):
+    def load_data(self, dataset_rel_path):
         """
         loads the data from csv to pandas and fill all Null values with 0.0
         :param dataset_rel_path: statics['data']['mock'] path to data file
-        :return: loaded pandas
         """
         path = os.path.abspath(__file__ + "/../../") + dataset_rel_path
         data_pandas = pd.read_csv(path, na_values=["Na", "null"]).fillna(0)
-        return data_pandas
+        self.data = data_pandas
 
-    @staticmethod
-    def load_pickle(relative_path):
+    def load_pickle(self, relative_path):
         absolute_path = os.path.abspath(__file__ + "/../../" + relative_path[:-4] + "_pickle")
         with open(absolute_path, 'rb') as file_handler:
             loaded_object = pickle.load(file_handler)
-        return loaded_object
+        self.data = loaded_object.data
+        self.data_features = loaded_object.data_features
+        self.data_targets = loaded_object.data_targets
+        self.label_to_numerical_mapping = loaded_object.label_to_numerical_mapping
 
     def save_pickle(self, relative_path):
         absolute_path = os.path.abspath(__file__ + "/../../" + relative_path[:-4] + "_pickle")
