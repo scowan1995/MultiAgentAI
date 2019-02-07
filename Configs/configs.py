@@ -23,10 +23,7 @@ def make_statics_configs():
         # --- Dataset and Loading ---
 
         # which files to load
-        'mock': True,
-        'train': False,
-        'val': False,
-        'test': False,
+        'sets': {'mock': True, 'train': False, 'val': False, 'test': False},
 
         #combine files?
         'combine_train_val': False,
