@@ -11,75 +11,22 @@ import pickle
 
 # Class Data Loader and Preprocessing
 
-class LoadPreprocess(object):
+class SingleSet(object):
     def __init__(self, relative_path, use_numerical_labels=True):
-        self.data = self.load_data(relative_path)
-        self.data_features = None
-        self.data_targets = None
-        self.label_to_numerical_mapping = None
+        try:
+            self = self.load_pickle(relative_path)
+        except:
+            self.data = self.load_data(relative_path)
+            self.data_features = None
+            self.data_targets = None
+            self.label_to_numerical_mapping = None
 
-        self.split_in_feature_and_target()
-        if use_numerical_labels:
-            self.numericalize_labels()
+            self.split_in_feature_and_target()
+            if use_numerical_labels:
+                self.numericalize_labels()
 
-        """
-        if configs["combine_train_val"]:
-
-            # TRAIN AND VAL ________________________________________________________________
-
-            if configs["load_pickle"]:
-
-                try:
-                    self.train_val_features_num = pd.read_pickle(
-                        os.path.abspath(__file__ + "/../../Data/train_val_features_num")
-                    )
-                    self.train_val_features = pd.read_pickle(
-                        os.path.abspath(__file__ + "/../../Data/train_val_features")
-                    )
-                    self.train_val_targets = pd.read_pickle(
-                        os.path.abspath(__file__ + "/../../Data/train_val_targets")
-                    )
-                    with open(
-                        os.path.abspath(__file__ + "/../../Data/train_val_mapping"),
-                        "rb",
-                    ) as file:
-                        self.train_val_mapping = pickle.load(file)
-
-                except:
-                    print(
-                        "load_pickle should be set to False because the data has not been loaded yet"
-                    )
-
-            else:
-                self.train_val = pd.concat(
-                    [self.train_data, self.val_data], axis=0, sort=False
-                )
-
-                self.train_val_features, self.train_val_targets = self.split_in_feature_and_target(
-                    self.train_val
-                )
-                self.train_val_features_num, self.train_val_mapping = self.numericalize_labels(
-                    self.train_val_features
-                )
-
-                self.train_val_features_num.to_pickle(
-                    os.path.abspath(__file__ + "/../../Data/train_val_features_num")
-                )
-                self.train_val_features.to_pickle(
-                    os.path.abspath(__file__ + "/../../Data/train_val_features")
-                )
-                self.train_val_targets.to_pickle(
-                    os.path.abspath(__file__ + "/../../Data/train_val_targets")
-                )
-                with open(
-                    os.path.abspath(__file__ + "/../../Data/train_val_mapping"), "wb"
-                ) as file:
-                    pickle.dump(
-                        self.train_val_mapping, file, protocol=pickle.HIGHEST_PROTOCOL
-                    )
-
-                print("data has been stored as pickle")
-        """
+            self.save_pickle(relative_path)
+            
         print("-- data loaded --")
 
     @staticmethod
@@ -92,6 +39,19 @@ class LoadPreprocess(object):
         path = os.path.abspath(__file__ + "/../../") + dataset_rel_path
         data_pandas = pd.read_csv(path, na_values=["Na", "null"]).fillna(0)
         return data_pandas
+
+    @staticmethod
+    def load_pickle(relative_path):
+        absolute_path = os.path.abspath(__file__ + "/../../" + relative_path[:-4] + "_pickle")
+        with open(absolute_path, 'rb') as file_handler:
+            loaded_object = pickle.load(file_handler)
+        return loaded_object
+
+    def save_pickle(self, relative_path):
+        absolute_path = os.path.abspath(__file__ + "/../../" + relative_path[:-4] + "_pickle")
+        with open(absolute_path, 'wb') as file_handler:
+            pickle.dump(self, file_handler, protocol=pickle.HIGHEST_PROTOCOL)
+        print("saved pickle")
 
     def split_in_feature_and_target(self):
         """
@@ -111,8 +71,6 @@ class LoadPreprocess(object):
     def numericalize_labels(self):
         """
         numericalizes categorical columns in pandas dataframe
-        :param data: pandas dataframe
-        :return: numericalized dataframe and mapping between numbers and previous categorical values
         """
         le = LabelEncoder()
         le_mapping = dict()
