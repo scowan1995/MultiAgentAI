@@ -3,7 +3,6 @@ import os
 sys.path.append("../../")
 
 from Configs.configs import statics, configs
-from Preprocessing.preprocessing import scale, numericalize, load_data, feature_target
 
 
 from sklearn.linear_model import LogisticRegression
