@@ -1,23 +1,10 @@
 import sys
 
 from Preprocessing.preprocessing import *
-from Preprocessing.preprocessing import SingleSet, DataSet
-from Model.data_exploration import Data_Exploration
 from Model.logistic_regression import Logistic_Regression
 # from Model.neural_network import
 
 sys.path.append("../")
-
-def load_all_datasets_and_explore_them(sets_info):
-    loaded_sets = {}
-    for current_set_name, loading_flag in sets_info.items():
-        if loading_flag:
-            loaded_sets[current_set_name] = SingleSet(statics['data'][current_set_name],
-                                                      use_numerical_labels=True)
-            if configs['data_exploration']:
-                data_exploration = DataExploration(loaded_sets[current_set_name])
-    return loaded_sets
-
 
 if __name__ == "__main__":
 

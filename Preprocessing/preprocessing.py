@@ -23,3 +23,14 @@ def split_sets(initial_set, size_percentage_first_set=50, use_numerical_labels=T
     set_1.split_in_feature_and_target()
     set_2.split_in_feature_and_target()
     return set_1, set_2
+
+
+def load_all_datasets_and_explore_them(sets_info):
+    loaded_sets = {}
+    for current_set_name, loading_flag in sets_info.items():
+        if loading_flag:
+            loaded_sets[current_set_name] = SingleSet(relative_path=statics['data'][current_set_name],
+                                                      use_numerical_labels=True)
+            if configs['data_exploration']:
+                data_exploration = DataExploration(loaded_sets[current_set_name])
+    return loaded_sets
