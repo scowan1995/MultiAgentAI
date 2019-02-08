@@ -3,7 +3,7 @@ import os
 import pandas as pd
 import pickle
 from Configs.configs import statics, configs
-from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 import sklearn.model_selection as ms
 
 sys.path.append("../../")
@@ -11,24 +11,27 @@ sys.path.append("../../")
 
 # Class Data Loader and Preprocessing
 class SingleSet(object):
-    def __init__(self, relative_path, use_numerical_labels=True):
-        self.data = None
-        self.data_features = None
+    def __init__(self, relative_path=None, data=None, use_numerical_labels=True):
+        self.data = data
+        self.data_features = data
         self.data_targets = None
         self.label_to_numerical_mapping = None
 
-        try:
-            self.load_pickle(relative_path)
-        except FileNotFoundError:
-            self.load_data(relative_path)
+        if relative_path is not None:
+            try:
+                self.load_pickle(relative_path)
+            except FileNotFoundError:
+                self.load_data(relative_path)
+                self.data_features = self.data
 
-            self.split_in_feature_and_target()
-            if use_numerical_labels:
-                self.numericalize_labels()
+                if use_numerical_labels:
+                    # it has to be executed before the splitting
+                    self.numericalize_labels()
 
-            self.save_pickle(relative_path)
+                self.split_in_feature_and_target()
+                self.save_pickle(relative_path)
 
-        print("-- data loaded --")
+            print("-- data loaded --")
 
     def load_data(self, dataset_rel_path):
         """
@@ -59,10 +62,10 @@ class SingleSet(object):
         Splits data dataframe into features and targets
 
         """
-        self.data_targets = self.data[configs["target"]]  # .astype('category')
+        self.data_targets = self.data_features[configs["target"]]  # .astype('category')
 
         # drop target
-        features = pd.DataFrame(self.data)
+        features = self.data_features.copy()
         # drop features and targets
         for f in features.columns.values:
             if f not in configs["features"]:
@@ -75,7 +78,7 @@ class SingleSet(object):
         """
         le = LabelEncoder()
         le_mapping = dict()
-        data = self.data
+        data = self.data.copy()
         for col in data.columns.values:
             print("numericalizing", col)
             # Encoding only categorical variables
@@ -95,10 +98,6 @@ class SingleSet(object):
         scale numerical data between 0 and 1
         :return: returns scaled pandas dataframe with numericalized values
         """
-
-        # Importing MinMaxScaler and initializing it
-        from sklearn.preprocessing import MinMaxScaler
-
         min_max = MinMaxScaler()
         # Scaling down both train and test data set
         scaled_data = min_max.fit_transform(
