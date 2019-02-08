@@ -5,7 +5,7 @@ import pandas as pd
 sys.path.append("../")
 
 from Configs.configs import statics, configs
-from Preprocessing.preprocessing import SingleSet
+from Preprocessing.preprocessing import SingleSet, DataSet
 from Model.data_exploration import Data_Exploration
 from Model.logistic_regression import Logistic_Regression
 #from Model.neural_network import
