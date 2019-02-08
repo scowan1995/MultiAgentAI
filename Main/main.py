@@ -1,15 +1,12 @@
-import os
 import sys
-import numpy as np
-import pandas as pd
-sys.path.append("../")
 
-from Configs.configs import statics, configs
+from Preprocessing.preprocessing import *
 from Preprocessing.preprocessing import SingleSet, DataSet
 from Model.data_exploration import Data_Exploration
 from Model.logistic_regression import Logistic_Regression
-#from Model.neural_network import
+# from Model.neural_network import
 
+sys.path.append("../")
 
 def load_all_datasets_and_explore_them(sets_info):
     loaded_sets = {}
@@ -27,6 +24,9 @@ if __name__ == "__main__":
     # DATA_________________________________________________________________________
     sets_information = configs['sets']
     sets = load_all_datasets_and_explore_them(sets_information)
+    s1, s2 = split_sets(sets['mock'])
+    s3 = merge_sets(sets['mock'], sets['mock'])
+    print(sets['mock'].data_features.shape)
 
     # MODEL________________________________________________________________________
     if configs['logistic_regression']:
