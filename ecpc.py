@@ -51,12 +51,10 @@ class ECPC:
 
     def calc_ecpc_given_feature(self, feature, value):
         numerator = self.data.loc[
-            (self.data["click"] == 1) & (self.data[feature] == value),
-            "payprice"
+            (self.data["click"] == 1) & (self.data[feature] == value), "payprice"
         ].sum()
         denominator = self.data.loc[
-            (self.data["click"]) == 1 & (self.data[feature] == value),
-            "click"
+            (self.data["click"]) == 1 & (self.data[feature] == value), "click"
         ].sum()
         if denominator == 0 or numerator == 0:
             return 0
@@ -80,13 +78,14 @@ class ECPC:
         """
         for item in self.plottable_items:
             x_ticks = list(map(lambda x: x[0], item[1]))
-            plt.plot(range(len(x_ticks)), list(map(lambda x: x[1], item[1])))
-            rotation = 'horizontal'
-            if type(x_ticks[0]) == str:
-                rotation = 'vertical'
-            plt.xticks(list(range(len(x_ticks))), x_ticks, rotation=rotation)
-            plt.title(item[0])
-            plt.show()
+            if len(x_ticks) > 0:
+                plt.plot(range(len(x_ticks)), list(map(lambda x: x[1], item[1])))
+                rotation = "horizontal"
+                if type(x_ticks[0]) == str:
+                    rotation = "vertical"
+                plt.xticks(list(range(len(x_ticks))), x_ticks, rotation=rotation)
+                plt.title(item[0])
+                plt.show()
 
 
 if __name__ == "__main__":
