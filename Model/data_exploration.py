@@ -3,34 +3,22 @@ import os
 sys.path.append("../../")
 
 from Configs.configs import statics, configs
-from Preprocessing.preprocessing import scale, numericalize
 from Configs.configs import statics, configs
-from Preprocessing.preprocessing import Load_Preprocess
+from Preprocessing.preprocessing import SingleSet
 
 
 import numpy as np
 import pandas as pd
 
 
-
-
-class Data_Exploration(object):
+class DataExploration(object):
 
     def __init__(self, data):
+        self._data = data
 
-        self.data = data
+    def compute_cost(self):
+        pass
 
+    def compute_expected_cost_per_click(self):
+        pass
 
-# main ______________________________________________________________________________________
-
-if __name__ == "__main__":
-
-    ## DATA_________________________________________________________________________
-
-    # data object contains "features", "targets", "features_num" and "mapping"
-    data = Load_Preprocess()
-
-
-    # DATA EXPLORATION________________________________________________________________
-
-    data_exploration = Data_Exploration(data.features_num, data.targets)
