@@ -24,7 +24,7 @@ class BasicBiddingAgent:
 
     def _train(self, training_set):
         """Learn parameters of the bidding model"""
-        pass
+        raise NotImplementedError
 
     def _process_bid_request(self, ad_user_auction_info=None):
         """Process the bid request that is sent to the Bidding Agent
@@ -40,4 +40,4 @@ class BasicBiddingAgent:
 
     def _bidding_function(self, utility=None, cost=None):
         """Deploy the learned bidding model"""
-        pass
+        raise NotImplementedError

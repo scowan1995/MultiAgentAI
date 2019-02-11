@@ -4,9 +4,9 @@ from .basic_bidding_agent import BasicBiddingAgent
 
 class ConstantBiddingAgent(BasicBiddingAgent):
     def __init__(self, training_set, initial_budget):
+        super().__init__(training_set, initial_budget)
         self.lower_value_range = 0
         self.higher_value_range = 0
-        super().__init__(training_set, initial_budget)
 
     def _train(self, training_set):
         """TODO: explore data (use class DataExploration) to determine a reasonable range"""
