@@ -42,4 +42,6 @@ class BasicBiddingAgent:
 
     def _bidding_function(self, utility=None, cost=None):
         """Deploy the learned bidding model"""
+
+
         raise NotImplementedError

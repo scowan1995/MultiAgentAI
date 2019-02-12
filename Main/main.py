@@ -12,14 +12,15 @@ if __name__ == "__main__":
     # DATA_________________________________________________________________________
     sets_information = configs['sets']
     sets = load_all_datasets_and_explore_them(sets_information)
-    s1, s2 = split_sets(sets['mock'])
-    s3 = merge_sets(sets['mock'], sets['mock'])
-    print(sets['mock'].data_features.shape)
+    #s1, s2 = split_sets(sets['mock'])
+    #s3 = merge_sets(sets['mock'], sets['mock'])
+
 
     # MODEL________________________________________________________________________
 
     if configs['constant_bidding']:
         constant_bidder = ConstantBiddingAgent(sets['mock'].data_features, 10)
+        constant_bidder.bid()
         print(constant_bidder._current_budget)
 
 

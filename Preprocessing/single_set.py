@@ -79,7 +79,7 @@ class SingleSet(object):
         le_mapping = dict()
         data = self.data.copy()
         for col in data.columns.values:
-            print("numericalizing", col)
+            #print("numericalizing", col)
             # Encoding only categorical variables
             if data[col].dtypes == "object":
                 # Using whole data to form an exhaustive list of levels
