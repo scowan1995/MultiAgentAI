@@ -1,6 +1,6 @@
 import sklearn.model_selection as ms
 from .single_set import SingleSet
-from Model.data_exploration import DataExploration
+from Preprocessing.data_exploration import DataExploration
 from Configs.configs import statics, configs
 
 
@@ -33,4 +33,5 @@ def load_all_datasets_and_explore_them(sets_info):
                                                       use_numerical_labels=True)
             if configs['data_exploration']:
                 data_exploration = DataExploration(loaded_sets[current_set_name])
+
     return loaded_sets

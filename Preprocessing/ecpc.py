@@ -1,9 +1,8 @@
-from data_loader import DataLoader
 import os
 import pandas as pd
 import matplotlib.pylab as plt
 
-from Configs.configs import statics, configs
+from Configs.configs import configs
 
 
 class ECPC:

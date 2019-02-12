@@ -35,9 +35,14 @@ def make_statics_configs():
         'features': ['weekday', 'hour', 'bidid', 'userid', 'useragent', 'IP', 'region', 'city', 'adexchange', 'domain', 'url', 'urlid', 'slotid', 'slotwidth', 'slotheight', 'slotvisibility', 'slotformat', 'slotprice', 'creative', 'keypage', 'advertiser', 'usertag'], # select the data features
 
 
-        # --- Data Exploration ---
+        # --- Preprocessing ---
 
-        'data_exploration': True,
+        'data_exploration': False,
+
+
+        # --- Basic Bidding ---
+
+        'constant_bidding': True,
 
 
         # --- Logistic Regression ---

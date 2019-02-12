@@ -26,6 +26,7 @@ class BasicBiddingAgent:
         """Learn parameters of the bidding model"""
         raise NotImplementedError
 
+
     def _process_bid_request(self, ad_user_auction_info=None):
         """Process the bid request that is sent to the Bidding Agent
 
@@ -37,6 +38,7 @@ class BasicBiddingAgent:
             user and the auction (ex. hour, region, device, ad size,...)
         """
         self._bid_value = self._bidding_function()
+
 
     def _bidding_function(self, utility=None, cost=None):
         """Deploy the learned bidding model"""
