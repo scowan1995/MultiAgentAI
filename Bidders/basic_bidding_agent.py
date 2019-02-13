@@ -5,6 +5,7 @@ class BasicBiddingAgent:
         self._bidding_model = None
 
         self.can_bid = True
+        self.clicks_obtained = 0
 
         self._train(training_set)
 
@@ -33,6 +34,7 @@ class BasicBiddingAgent:
             if click:
                 # Bidder has to pay impression
                 self._current_budget -= cost
+                self.clicks_obtained += 1
                 if self._current_budget <= 0:
                     # Bidder finishes budget and can't bid anymore
                     self.can_bid = False

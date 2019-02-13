@@ -41,10 +41,10 @@ if __name__ == "__main__":
                 constant_bidder.read_win_notice(cost=pay_price, click=click)
 
             else:
-                print("Budged finished!")
                 break
 
-        print(f"Final budget = {constant_bidder.get_current_budget()}")
+        print(f"Final budget = {constant_bidder.get_current_budget()}. "
+              f"Clicks obtained = {constant_bidder.clicks_obtained}")
 
     if configs['logistic_regression']:
         logistic_regression = Logistic_Regression(sets['mock'].data_features, sets['mock'].data_targets)
