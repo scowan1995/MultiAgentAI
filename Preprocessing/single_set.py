@@ -61,7 +61,15 @@ class SingleSet(object):
         Splits data dataframe into features and targets
 
         """
-        self.data_targets = self.data_features[configs["target"]]  # .astype('category')
+        if len(configs["target"]) == 1:
+            self.data_targets = self.data_features[configs["target"]]
+        else:
+            targets = self.data_targets.copy()
+            # drop features and targets
+            for t in targets.columns.values:
+                if t not in configs["features"]:
+                    targets.pop(t)
+            self.data_targets = targets
 
         # drop target
         features = self.data_features.copy()
@@ -70,6 +78,18 @@ class SingleSet(object):
             if f not in configs["features"]:
                 features.pop(f)
         self.data_features = features
+
+    def get_feature_iterator(self):
+        try:
+            return self.data_features.iterrows()
+        except AttributeError:
+            return self.data_features.iteritems()
+
+    def get_targets_iterator(self):
+        try:
+            return self.data_targets.iterrows()
+        except AttributeError:
+            return self.data_targets.iteritems()
 
     def numericalize_labels(self):
         """

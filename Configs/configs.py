@@ -31,7 +31,7 @@ def make_statics_configs():
         'load_pickle': True,    # load full train and val set, but pickled and preprocessed version
 
         # target and feature variables
-        'target' : 'click',     # 'payprice', 'bidprice'   # select the target
+        'target': ['click', 'payprice', 'bidprice'],   # select the target
         'features': ['weekday', 'hour', 'bidid', 'userid', 'useragent', 'IP', 'region', 'city', 'adexchange', 'domain', 'url', 'urlid', 'slotid', 'slotwidth', 'slotheight', 'slotvisibility', 'slotformat', 'slotprice', 'creative', 'keypage', 'advertiser', 'usertag'], # select the data features
 
 
