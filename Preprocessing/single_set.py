@@ -64,10 +64,10 @@ class SingleSet(object):
         if len(configs["target"]) == 1:
             self.data_targets = self.data_features[configs["target"]]
         else:
-            targets = self.data_targets.copy()
+            targets = self.data_features.copy()
             # drop features and targets
             for t in targets.columns.values:
-                if t not in configs["features"]:
+                if t not in configs["target"]:
                     targets.pop(t)
             self.data_targets = targets
 
