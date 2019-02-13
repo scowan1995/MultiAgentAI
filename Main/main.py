@@ -1,6 +1,8 @@
 import sys
 
 from Preprocessing.preprocessing import *
+from Preprocessing.data_exploration import *
+from Configs.configs import configs
 from Model.logistic_regression import Logistic_Regression
 from Bidders.constant_bidding_agent import ConstantBiddingAgent
 # from Model.neural_network import
@@ -11,9 +13,9 @@ if __name__ == "__main__":
 
     # DATA_________________________________________________________________________
     sets_information = configs['sets']
-    sets = load_all_datasets_and_explore_them(sets_information)
-    #s1, s2 = split_sets(sets['mock'])
-    #s3 = merge_sets(sets['mock'], sets['mock'])
+    sets = load_all_datasets(sets_information)
+    # s1, s2 = split_sets(sets['mock'])
+    # s3 = merge_sets(sets['mock'], sets['mock'])
 
 
     # MODEL________________________________________________________________________
