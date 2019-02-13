@@ -17,6 +17,8 @@ if __name__ == "__main__":
     # s1, s2 = split_sets(sets['mock'])
     # s3 = merge_sets(sets['mock'], sets['mock'])
 
+    ecpcs_plot_data = compute_ecpc_multiple_features(sets['mock'])
+    plot_ecpc_features(ecpcs_plot_data)
 
     # MODEL________________________________________________________________________
 
@@ -30,6 +32,4 @@ if __name__ == "__main__":
         logistic_regression = Logistic_Regression(sets['mock'].data_features, sets['mock'].data_targets)
         print(logistic_regression.score)
 
-
-
-
+    plt.show()
