@@ -15,5 +15,8 @@ class ConstantBiddingAgent(BasicBiddingAgent):
         """Deploy the learned bidding model"""
         return self._bid_value
 
+    def set_const_bid_value(self, bid):
+        self._bid_value = bid
+
 
 
