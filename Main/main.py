@@ -5,6 +5,7 @@ from Preprocessing.data_exploration import *
 from Configs.configs import configs
 from Model.logistic_regression import Logistic_Regression
 from Bidders.constant_bidding_agent import ConstantBiddingAgent
+from Rtb.rtb_ad_exchange import RtbAdExchange
 # from Model.neural_network import
 
 sys.path.append("../")
@@ -17,11 +18,13 @@ if __name__ == "__main__":
     # s1, s2 = split_sets(sets['mock'])
     # s3 = merge_sets(sets['mock'], sets['mock'])
 
-    ecpcs_plot_data = compute_ecpc_multiple_features(sets['mock'])
-    plot_ecpc_features(ecpcs_plot_data)
+    # ecpcs_plot_data = compute_ecpc_multiple_features(sets['mock'])
+    # plot_ecpc_features(ecpcs_plot_data)
 
     # MODEL________________________________________________________________________
-    bidder_budget = 1000
+    rtb = RtbAdExchange()
+    bidder_budget = 10000
+
     if configs['constant_bidding']:
         # define bidder using 'train' set
         constant_bidder = ConstantBiddingAgent(training_set=sets['mock'].data_features,
@@ -31,17 +34,18 @@ if __name__ == "__main__":
         for (_, features_row), (_, targets_row) in zip(sets['mock'].get_feature_iterator(),
                                                        sets['mock'].get_targets_iterator()):
 
+            rtb.evaluate_known_auction(targets_row)
+
             # agent bids evaluating info received from RTB ad exchange and DMP
             if constant_bidder.can_bid:
-                constant_bidder.bid(ad_user_auction_info=features_row)
+                bid_value = constant_bidder.bid(ad_user_auction_info=features_row)
+                rtb.receive_new_bid(bid_value)
 
-                # agent receives win notice from RTB ad exchange
-                click = bool(targets_row["click"])
-                pay_price = targets_row["payprice"]
+            pay_price, click = rtb.report_win_notice()
+
+            # agent receives win notice from RTB ad exchange (until his last bid => before finishing budget)
+            if constant_bidder.can_bid:
                 constant_bidder.read_win_notice(cost=pay_price, click=click)
-
-            else:
-                break
 
         print(f"Final budget = {constant_bidder.get_current_budget()}. "
               f"Clicks obtained = {constant_bidder.clicks_obtained}")
