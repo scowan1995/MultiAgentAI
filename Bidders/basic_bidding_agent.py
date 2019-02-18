@@ -4,28 +4,44 @@ class BasicBiddingAgent:
         self._bid_value = 0
         self._bidding_model = None
 
+        self.can_bid = True
+        self.clicks_obtained = 0
+
         self._train(training_set)
+
+    def get_current_bid_value(self):
+        return self._bid_value
+
+    def get_current_budget(self):
+        return self._current_budget
 
     def bid(self, ad_user_auction_info=None):
         """Receive a bid request and return the bid"""
         self._process_bid_request(ad_user_auction_info)
         return self._bid_value
 
-    def read_win_notice(self, cost, win=False):
+    def read_win_notice(self, cost, click=False):
         """Receive the auction outcome and update class instance attributes
 
         Args:
             cost: amount payed for the ad. Since we use a second price auction this value is not the
                 same as our bid value (It is the second highest bid value)
-            win: flag that is True when the agent win the auction
+            click: flag that is True when the user clicked on the ad => agent has to pay for the
+                impression
         """
-        if win:
-            self._current_budget -= cost
+        if self._bid_value > cost:
+            # Bidder wins the auction
+            if click:
+                # Bidder has to pay impression
+                self._current_budget -= cost
+                self.clicks_obtained += 1
+                if self._current_budget <= 0:
+                    # Bidder finishes budget and can't bid anymore
+                    self.can_bid = False
 
     def _train(self, training_set):
         """Learn parameters of the bidding model"""
         raise NotImplementedError
-
 
     def _process_bid_request(self, ad_user_auction_info=None):
         """Process the bid request that is sent to the Bidding Agent
@@ -39,9 +55,6 @@ class BasicBiddingAgent:
         """
         self._bid_value = self._bidding_function()
 
-
     def _bidding_function(self, utility=None, cost=None):
         """Deploy the learned bidding model"""
-
-
         raise NotImplementedError

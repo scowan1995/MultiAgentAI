@@ -21,12 +21,30 @@ if __name__ == "__main__":
     plot_ecpc_features(ecpcs_plot_data)
 
     # MODEL________________________________________________________________________
-
+    bidder_budget = 1000
     if configs['constant_bidding']:
-        constant_bidder = ConstantBiddingAgent(sets['mock'].data_features, 10)
-        constant_bidder.bid()
-        print(constant_bidder._current_budget)
+        # define bidder using 'train' set
+        constant_bidder = ConstantBiddingAgent(training_set=sets['mock'].data_features,
+                                               initial_budget=bidder_budget)
 
+        # iterate over 'validation set'
+        for (_, features_row), (_, targets_row) in zip(sets['mock'].get_feature_iterator(),
+                                                       sets['mock'].get_targets_iterator()):
+
+            # agent bids evaluating info received from RTB ad exchange and DMP
+            if constant_bidder.can_bid:
+                constant_bidder.bid(ad_user_auction_info=features_row)
+
+                # agent receives win notice from RTB ad exchange
+                click = bool(targets_row["click"])
+                pay_price = targets_row["payprice"]
+                constant_bidder.read_win_notice(cost=pay_price, click=click)
+
+            else:
+                break
+
+        print(f"Final budget = {constant_bidder.get_current_budget()}. "
+              f"Clicks obtained = {constant_bidder.clicks_obtained}")
 
     if configs['logistic_regression']:
         logistic_regression = Logistic_Regression(sets['mock'].data_features, sets['mock'].data_targets)
