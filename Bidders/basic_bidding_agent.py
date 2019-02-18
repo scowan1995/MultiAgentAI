@@ -23,14 +23,17 @@ class BasicBiddingAgent:
     def read_win_notice(self, cost, click=False):
         """Receive the auction outcome and update class instance attributes
 
-        Args:
+        :param
             cost: amount payed for the ad. Since we use a second price auction this value is not the
                 same as our bid value (It is the second highest bid value)
             click: flag that is True when the user clicked on the ad => agent has to pay for the
                 impression
+        :return True if it wins
         """
+        win_flag = False
         if self._bid_value > cost:
             # Bidder wins the auction
+            win_flag = True
             if click:
                 # Bidder has to pay impression
                 self._current_budget -= cost
@@ -38,6 +41,8 @@ class BasicBiddingAgent:
                 if self._current_budget <= 0:
                     # Bidder finishes budget and can't bid anymore
                     self.can_bid = False
+
+        return win_flag
 
     def _train(self, training_set):
         """Learn parameters of the bidding model"""

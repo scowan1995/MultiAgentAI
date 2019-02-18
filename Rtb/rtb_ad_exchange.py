@@ -10,12 +10,13 @@ class RtbAdExchange:
 
         :param known_auction_outcome: this is a targets row, which can come from the validation sets
         """
+        self._bids = []
         self._bids.append(known_auction_outcome['bidprice'])
         self._cost = known_auction_outcome['payprice']
         self._click = bool(known_auction_outcome['click'])
 
-    def receive_new_bid(self, bidder_bids):
-        self._bids.append(bidder_bids)
+    def receive_new_bid(self, bidder_bid):
+        self._bids.append(bidder_bid)
 
     def generated_a_click(self):
         """Manually decide if it generated a click.
