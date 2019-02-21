@@ -23,11 +23,11 @@ if __name__ == "__main__":
 
     # MODEL________________________________________________________________________
     rtb = RtbAdExchange()
-    bidder_budget = 10000
+    bidder_budget = 6250
 
     if configs['constant_bidding']:
         # define bidder using 'train' set
-        constant_bidder = ConstantBiddingAgent(training_set=sets['mock'].data_features,
+        constant_bidder = ConstantBiddingAgent(training_set=sets['mock'],
                                                initial_budget=bidder_budget)
 
         # iterate over 'validation set'
