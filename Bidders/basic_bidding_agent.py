@@ -34,13 +34,13 @@ class BasicBiddingAgent:
         if self._bid_value > cost:
             # Bidder wins the auction
             win_flag = True
-            if click:
-                # Bidder has to pay impression
-                self._current_budget -= cost
-                self.clicks_obtained += 1
-                if self._current_budget <= 0:
-                    # Bidder finishes budget and can't bid anymore
-                    self.can_bid = False
+            # if click:
+            # Bidder has to pay impression
+            self._current_budget -= cost
+            self.clicks_obtained += 1
+            if self._current_budget <= 0:
+                # Bidder finishes budget and can't bid anymore
+                self.can_bid = False
 
         return win_flag
 
