@@ -42,6 +42,25 @@ def single_agent_interact_with_rtb(bidder, print_results=False):
     return result
 
 
+def multiple_random_bidders_interact_with_rtb(bidders):
+    for (_, features_row), (_, targets_row) in zip(sets['mock'].get_feature_iterator(),
+                                                   sets['mock'].get_targets_iterator()):
+
+        rtb.evaluate_known_auction(targets_row)
+
+        for current_bidder in bidders:
+            if current_bidder.can_bid:
+                bid_value = current_bidder.bid(ad_user_auction_info=features_row)
+                rtb.receive_new_bid(bid_value)
+
+        pay_price, click = rtb.report_win_notice()
+
+        for bidder_number, current_bidder in enumerate(bidders):
+            if current_bidder.can_bid:
+                if current_bidder.read_win_notice(cost=pay_price, click=click):
+                    print(f"The winner is bidder number {bidder_number}!")
+
+
 if __name__ == "__main__":
 
     # DATA_________________________________________________________________________
@@ -90,7 +109,15 @@ if __name__ == "__main__":
 
     # MULTIPLE RANDOM BIDDERS______________________________________________________
     if configs['multiple_random_bidding']:
-        pass
+        total_bidders = 10
+        bidders = []
+        for i in range(total_bidders):
+            random_bidder = RandomBiddingAgent(training_set=sets['mock'],
+                                               initial_budget=bidder_budget)
+            random_bidder.perturbation = True
+            bidders.append(random_bidder)
+
+        multiple_random_bidders_interact_with_rtb(bidders)
 
     if configs['logistic_regression']:
         logistic_regression = Logistic_Regression(sets['mock'].data_features, sets['mock'].data_targets)
