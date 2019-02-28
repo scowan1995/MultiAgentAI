@@ -47,8 +47,10 @@ if __name__ == "__main__":
             if constant_bidder.can_bid:
                 constant_bidder.read_win_notice(cost=pay_price, click=click)
 
-        print(f"Final budget = {constant_bidder.get_current_budget()}. "
-              f"Clicks obtained = {constant_bidder.clicks_obtained}")
+        print(f"CONSTANT BIDDER.  Final budget = {constant_bidder.get_current_budget()}. "
+              f"Clicks obtained = {constant_bidder.clicks_obtained}. "
+              f"Click Through Rate = {constant_bidder.get_current_click_through_rate()}. "
+              f"Cost Per Click = {constant_bidder.get_current_cost_per_click()}")
 
     if configs['logistic_regression']:
         logistic_regression = Logistic_Regression(sets['mock'].data_features, sets['mock'].data_targets)

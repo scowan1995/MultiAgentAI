@@ -6,6 +6,8 @@ class BasicBiddingAgent:
 
         self.can_bid = True
         self.clicks_obtained = 0
+        self._total_paid = 0
+        self._bids_won = 0
 
         self._train(training_set)
 
@@ -14,6 +16,18 @@ class BasicBiddingAgent:
 
     def get_current_budget(self):
         return self._current_budget
+
+    def get_current_click_through_rate(self):
+        ctr = 0
+        if self._bids_won > 0:
+            ctr = self.clicks_obtained / self._bids_won
+        return ctr
+
+    def get_current_cost_per_click(self):
+        cpc = 0
+        if self.clicks_obtained > 0:
+            cpc = self._total_paid / self.clicks_obtained
+        return cpc
 
     def bid(self, ad_user_auction_info=None):
         """Receive a bid request and return the bid"""
@@ -26,6 +40,7 @@ class BasicBiddingAgent:
         :param
             cost: amount payed for the ad. Since we use a second price auction this value is not the
                 same as our bid value (It is the second highest bid value)
+                This value is updated by the RTB Ad exchange.
             click: flag that is True when the user clicked on the ad => agent has to pay for the
                 impression
         :return True if it wins
@@ -34,10 +49,12 @@ class BasicBiddingAgent:
         if self._bid_value > cost:
             # Bidder wins the auction
             win_flag = True
-            # if click:
+            self._bids_won += 1
+            if click:
+                self.clicks_obtained += 1
             # Bidder has to pay impression
+            self._total_paid += cost
             self._current_budget -= cost
-            self.clicks_obtained += 1
             if self._current_budget <= 0:
                 # Bidder finishes budget and can't bid anymore
                 self.can_bid = False
