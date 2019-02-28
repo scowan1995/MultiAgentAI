@@ -43,6 +43,7 @@ def make_statics_configs():
         # --- Basic Bidding ---
 
         'constant_bidding': True,
+        'random_bidding': True,
 
 
         # --- Logistic Regression ---

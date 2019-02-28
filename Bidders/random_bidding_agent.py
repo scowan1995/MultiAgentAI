@@ -1,48 +1,54 @@
-from basic_bidding_agent import BasicBiddingAgent
-import random
-import os
-import pandas as pd
-import numpy.random as r
-import statistics as s
+from .basic_bidding_agent import BasicBiddingAgent
+
+import numpy.random
+import statistics
 
 
 class RandomBiddingAgent(BasicBiddingAgent):
     def __init__(self, training_set, initial_budget):
+        self._mean_val = 0
+        self._std_val = 0
+        self._lower_bound = 0
+        self._upper_bound = 0
         super().__init__(training_set, initial_budget)
-        self.initial_budget = initial_budget
-        self.mean_val = 0
-        self.std_val = 0
-        self.lower_bound = 0
-        self.upper_bound = 0
 
     def _train(self, training_set):
         """
         Training in this case will invole getting the mean and standard deviation of the
         distribution of the training set to create a gaussian to sample from.
         """
-        data_path = os.path.abspath(os.pardir + "/MultiAgentAI/Data/train.csv")
-        self.df = pd.read_csv(data_path, na_values=["Na", "null"]).fillna(0)
-        success_bid_dist = self.df.loc[lambda x: x["click"] == 1, "bidprice"]
-        self.mean_val = success_bid_dist.mean()
-        self.std_val = success_bid_dist.std()
-        print("Mean value", self.mean_val)
-        print("Standard dev", self.std_val)
-        self.lower_bound = self.mean_val - (3 * self.std_val)
-        self.upper_bound = self.mean_val + (3 * self.std_val)
-        print("lower bound", self.lower_bound)
-        print("upper bound", self.upper_bound)
+        success_bid_dist = training_set.data_targets.loc[lambda x: x["click"] == 1, "bidprice"]
+        self._mean_val = success_bid_dist.mean()
+        self._std_val = success_bid_dist.std()
+        print("Mean value", self._mean_val)
+        print("Standard dev", self._std_val)
 
-    def _bidding_function(self, low=0.0, high=1.0):
+        self._lower_bound = self._mean_val - (3 * self._std_val)
+        self._upper_bound = self._mean_val + (3 * self._std_val)
+        print("lower bound", self._lower_bound)
+        print("upper bound", self._upper_bound)
+
+    def _bidding_function(self, utility=None, cost=None):
         """Deploy the learned bidding model"""
-        bid = r.uniform(low, high)
+        bid = numpy.random.uniform(self._lower_bound, self._upper_bound)
         # print("bid chosen", bid)
         return bid
 
+    def set_random_bidding_bounds(self, lower_bound=0.0, upper_bound=1.0):
+        self._lower_bound = lower_bound
+        self._upper_bound = upper_bound
+
+    def perturb_boundaries(self):
+        self._lower_bound = numpy.random.uniform(self._lower_bound, self._mean_val)
+        self._upper_bound = numpy.random.uniform(self._mean_val, self._upper_bound)
+
+
+"""
     def get_test_bounds(self, nbounds):
         bounds = []
         for i in range(nbounds):
-            low = r.uniform(self.lower_bound, self.mean_val)
-            high = r.uniform(self.mean_val, self.upper_bound)
+            low = numpy.random.uniform(self._lower_bound, self._mean_val)
+            high = numpy.random.uniform(self._mean_val, self._upper_bound)
             bounds.append((low, high))
         return bounds
 
@@ -72,19 +78,20 @@ class RandomBiddingAgent(BasicBiddingAgent):
         print("best cpc", best_cpc)
         print("got ctr:", ctr)
         print("using", best_bound)
-        print("The mean cpc during tuning was", s.mean(cpcs))
+        print("The mean cpc during tuning was", statistics.mean(cpcs))
         print(
             "the variance and standard deviance respectively were",
-            s.variance(cpcs),
+            statistics.variance(cpcs),
             " ,",
-            s.stdev(cpcs),
+            statistics.stdev(cpcs),
         )
         print(
             "the variance and standard deviance respectively were",
-            s.variance(ctrs),
+            statistics.variance(ctrs),
             " ,",
-            s.stdev(ctrs),
+            statistics.stdev(ctrs),
         )
+
 
     def begin_bidding(self, low, high):
         bids_won = 0
@@ -122,3 +129,4 @@ class RandomBiddingAgent(BasicBiddingAgent):
         print("CTR:", ctr)
         print("CPC", cpc)
         return cpc, ctr
+"""
