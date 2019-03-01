@@ -32,7 +32,9 @@ class BasicBiddingAgent:
     def bid(self, ad_user_auction_info=None):
         """Receive a bid request and return the bid"""
         self._process_bid_request(ad_user_auction_info)
-        return self._bid_value
+        # if bidder doesn't have money to place the bid he would like,
+        # it still try to bid all the remained budget hoping in good luck
+        return min(self._bid_value, self._current_budget)
 
     def read_win_notice(self, cost, click=False):
         """Receive the auction outcome and update class instance attributes
