@@ -42,23 +42,25 @@ def single_agent_interact_with_rtb(bidder, print_results=False):
     return result
 
 
-def multiple_random_bidders_interact_with_rtb(bidders):
+def multiple_random_bidders_interact_with_rtb(bidder_agents):
+    auction_counter = 0
     for (_, features_row), (_, targets_row) in zip(sets['mock'].get_feature_iterator(),
                                                    sets['mock'].get_targets_iterator()):
 
         rtb.evaluate_known_auction(targets_row)
 
-        for current_bidder in bidders:
+        for current_bidder in bidder_agents:
             if current_bidder.can_bid:
                 bid_value = current_bidder.bid(ad_user_auction_info=features_row)
                 rtb.receive_new_bid(bid_value)
 
         pay_price, click = rtb.report_win_notice()
+        auction_counter += 1
 
-        for bidder_number, current_bidder in enumerate(bidders):
+        for bidder_number, current_bidder in enumerate(bidder_agents):
             if current_bidder.can_bid:
                 if current_bidder.read_win_notice(cost=pay_price, click=click):
-                    print(f"The winner is bidder number {bidder_number}!")
+                    print(f"The winner of auction {auction_counter} is bidder number {bidder_number}")
 
 
 if __name__ == "__main__":
