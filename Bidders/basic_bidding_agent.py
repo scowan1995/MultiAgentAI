@@ -1,6 +1,7 @@
 class BasicBiddingAgent:
     def __init__(self, training_set, initial_budget):
         self._current_budget = initial_budget
+        self._current_slot_price = None
         self._bid_value = 0
         self._bidding_model = None
 
@@ -34,7 +35,12 @@ class BasicBiddingAgent:
         self._process_bid_request(ad_user_auction_info)
         # if bidder doesn't have money to place the bid he would like,
         # it still try to bid all the remained budget hoping in good luck
-        return min(self._bid_value, self._current_budget)
+        possible_bid = min(self._bid_value, self._current_budget)
+
+        # check if the bid is below the reserve price
+        if possible_bid < self._current_slot_price:
+            possible_bid = 0  # like not bidding
+        return possible_bid
 
     def read_win_notice(self, cost, click=False):
         """Receive the auction outcome and update class instance attributes
@@ -77,6 +83,7 @@ class BasicBiddingAgent:
             ad_user_auction_info: data type to be defined. It contains information about the ad, the
             user and the auction (ex. hour, region, device, ad size,...)
         """
+        self._current_slot_price = ad_user_auction_info['slotprice']
         self._bid_value = self._bidding_function()
 
     def _bidding_function(self, utility=None, cost=None):

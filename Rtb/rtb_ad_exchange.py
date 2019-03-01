@@ -8,6 +8,9 @@ class RtbAdExchange:
     def evaluate_known_auction(self, known_auction_outcome):
         """ Interpret results of a finished auction
 
+        If the evaluation of a known auction is required, this function has to be called before
+        other agents start joining the auction.
+
         :param known_auction_outcome: this is a targets row, which can come from the validation sets
         """
         self._bids = []
