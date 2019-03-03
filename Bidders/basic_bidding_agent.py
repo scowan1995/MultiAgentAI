@@ -49,6 +49,7 @@ class BasicBiddingAgent:
             cost: amount payed for the ad. Since we use a second price auction this value is not the
                 same as our bid value (It is the second highest bid value)
                 This value is updated by the RTB Ad exchange.
+                There should be only one Bid above the cost computed by the RTB, the winner bid.
             click: flag that is True when the user clicked on the ad => agent has to pay for the
                 impression
         :return True if it wins
