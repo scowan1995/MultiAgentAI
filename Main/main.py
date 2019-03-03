@@ -1,6 +1,6 @@
 import sys
 
-import numpy as np
+from Main.bidders_rtb_interactions import *
 from Preprocessing.preprocessing import *
 from Preprocessing.data_exploration import *
 from Configs.configs import configs
@@ -13,37 +13,7 @@ from Rtb.rtb_ad_exchange import RtbAdExchange
 sys.path.append("../")
 
 
-def single_agent_interact_with_rtb(bidder, print_results=False):
-    for (_, features_row), (_, targets_row) in zip(sets['mock'].get_feature_iterator(),
-                                                   sets['mock'].get_targets_iterator()):
-
-        rtb.evaluate_known_auction(targets_row)
-
-        # agent bids evaluating info received from RTB ad exchange and DMP
-        if bidder.can_bid:
-            bid_value = bidder.bid(ad_user_auction_info=features_row)
-            rtb.receive_new_bid(bid_value)
-
-        pay_price, click = rtb.report_win_notice()
-
-        # agent receives win notice from RTB ad exchange (until his last bid => before finishing budget)
-        if bidder.can_bid:
-            bidder.read_win_notice(cost=pay_price, click=click)
-
-    if print_results:
-        print(f"Final budget = {bidder.get_current_budget()}. "
-              f"Clicks obtained = {bidder.clicks_obtained}. "
-              f"Click Through Rate = {bidder.get_current_click_through_rate()}. "
-              f"Cost Per Click = {bidder.get_current_cost_per_click()}")
-
-    result = np.array([bidder.get_current_budget(), bidder.clicks_obtained,
-                       bidder.get_current_click_through_rate(), bidder.get_current_cost_per_click()])
-
-    return result
-
-
-if __name__ == "__main__":
-
+def main():
     # DATA_________________________________________________________________________
     sets_information = configs['sets']
     sets = load_all_datasets(sets_information)
@@ -62,7 +32,7 @@ if __name__ == "__main__":
         # define bidder using 'train' set
         constant_bidder = ConstantBiddingAgent(training_set=sets['mock'],
                                                initial_budget=bidder_budget)
-        single_agent_interact_with_rtb(constant_bidder, print_results=True)
+        single_agent_interact_with_rtb(constant_bidder, rtb, sets, print_results=True)
 
     # SINGLE RANDOM BIDDER_________________________________________________________
     if configs['random_bidding']:
@@ -70,7 +40,7 @@ if __name__ == "__main__":
         random_bidder = RandomBiddingAgent(training_set=sets['mock'],
                                            initial_budget=bidder_budget)
         # normal usage of the bidder
-        single_agent_interact_with_rtb(random_bidder, print_results=True)
+        single_agent_interact_with_rtb(random_bidder, rtb, sets, print_results=True)
 
         # repeated usage of the bidder for its analysis
         random_bidder.perturbation = True  # The boundaries are perturbed with respect to training
@@ -78,7 +48,7 @@ if __name__ == "__main__":
         all_boundaries = []
         total_iterations = 10
         for iteration in range(total_iterations):
-            results.append(single_agent_interact_with_rtb(random_bidder))
+            results.append(single_agent_interact_with_rtb(random_bidder, rtb, sets))
             all_boundaries.append(random_bidder.get_boundaries())
         results_np = np.array(results)
         best_cpc_index = int(np.argmin(results_np[:, 3]))
@@ -90,10 +60,27 @@ if __name__ == "__main__":
 
     # MULTIPLE RANDOM BIDDERS______________________________________________________
     if configs['multiple_random_bidding']:
-        pass
+        total_bidders = 100
+        bidders = []
+        for i in range(total_bidders):
+            random_bidder = RandomBiddingAgent(training_set=sets['train'],
+                                               initial_budget=bidder_budget)
+            # If bidders share the same dataset, manually perturb their "training boundaries" once
+            lower = np.random.uniform(random_bidder.get_boundaries()[0], random_bidder.get_mean())
+            upper = np.random.uniform(random_bidder.get_mean(), random_bidder.get_boundaries()[1])
+            random_bidder.set_boundaries(lower, upper)
+
+            # random_bidder.perturbation = True  # further boundary perturbation (at every bid)
+            bidders.append(random_bidder)
+
+        multiple_random_bidders_interact_with_rtb(bidders, rtb, sets)
+        evaluate_multiple_random_bidders_performance(bidders)
 
     if configs['logistic_regression']:
         logistic_regression = Logistic_Regression(sets['mock'].data_features, sets['mock'].data_targets)
         print(logistic_regression.score)
 
+
+if __name__ == "__main__":
+    main()
     plt.show()
