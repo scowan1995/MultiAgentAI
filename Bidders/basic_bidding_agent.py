@@ -29,6 +29,12 @@ class BasicBiddingAgent:
             cpc = self._total_paid / self.clicks_obtained
         return cpc
 
+    def get_bids_won(self):
+        return self._bids_won
+
+    def get_total_paied(self):
+        return self._total_paid
+
     def bid(self, ad_user_auction_info=None):
         """Receive a bid request and return the bid"""
         self._process_bid_request(ad_user_auction_info)
