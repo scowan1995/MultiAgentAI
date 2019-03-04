@@ -13,6 +13,7 @@ class SingleSet(object):
     def __init__(self, relative_path=None, data=None, use_numerical_labels=True):
         self.data = data
         self.data_features = data
+        self.data_features_scaled_np = None  # available only after preprocessing scaling
         self.data_targets = None
         self.label_to_numerical_mapping = None
 
@@ -93,7 +94,7 @@ class SingleSet(object):
 
     def numericalize_labels(self):
         """
-        numericalizes categorical columns in pandas dataframe
+        numericalize categorical columns in pandas dataframe
         """
         le = LabelEncoder()
         le_mapping = dict()
