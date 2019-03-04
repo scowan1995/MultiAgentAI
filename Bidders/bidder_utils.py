@@ -71,6 +71,9 @@ class BidderUtils:
         return X, Y
 
     def downsample_data(self, X, Y):
+        """
+        Downsample the data so we have equal clicks, no clicks
+        """
         positive_clicksX = X[(Y == 1)]
         positive_clicksY = Y[(Y == 1)]
         negative_clicksX = X[(Y == 0)]
