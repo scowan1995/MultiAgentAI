@@ -27,7 +27,7 @@ class RandomBiddingAgent(BasicBiddingAgent):
         self._lower_bound = max(0, self._mean_val - (3 * self._std_val))
         self._upper_bound = max(0, self._mean_val + (3 * self._std_val))
 
-    def _bidding_function(self, utility=None, cost=None):
+    def _bidding_function(self):
         """Deploy the learned bidding model"""
         if self.perturbation:
             low, high = self._perturb_boundaries()

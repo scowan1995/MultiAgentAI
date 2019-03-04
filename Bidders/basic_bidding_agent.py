@@ -93,6 +93,6 @@ class BasicBiddingAgent:
         self._current_slot_price = ad_user_auction_info['slotprice']
         self._bid_value = self._bidding_function()
 
-    def _bidding_function(self, utility=None, cost=None):
+    def _bidding_function(self):
         """Deploy the learned bidding model"""
         raise NotImplementedError
