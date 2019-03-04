@@ -17,6 +17,7 @@ def main():
     # DATA_________________________________________________________________________
     sets_information = configs['sets']
     sets = load_all_datasets(sets_information)
+    scale_all_sets_features(sets)
     # s1, s2 = split_sets(sets['mock'])
     # s3 = merge_sets(sets['mock'], sets['mock'])
 
