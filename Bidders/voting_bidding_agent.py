@@ -1,21 +1,27 @@
+from sklearn.ensemble import GradientBoostingRegressor, VotingClassifier
+from sklearn.linear_model import LogisticRegression
+
 from basic_bidding_agent import BiddingAgent
-from sklearn.ensemble import VotingClassifier, GradientBoostingRegressor
+from bidder_utils import BidderUtils
 
 
 class EnsembleBiddingAgent(BiddingAgent):
 
     def __init__(self, training_set, initial_budget, click_models):
-        self.estimators = click_models
+        self.estimators = [LogisticRegression(class_weight="balanced", max_iter=500)]
+        self.utils = BidderUtils()
         self.click_model = None
         self.pay_model = GradientBoostingRegressor()
 
         super().__init__(training_set, initial_budget)
 
     def _train(self, training_set):
-        trainX, trainY = self.downsample_training_set()
+        x_clicks, y_clicks = self.utils.format_data(training_set, target="click")
+        x_clicks, y_clicks = self.utils.downsample(x_clicks, y_clicks)
+        x_pay, y_pay = self.utils.format_data(training_set, target="payprice")
         self.click_model = VotingClassifier(self.estimators, n_jobs=-1)
-        self.click_model.fit(trainX, trainY)
-        self.pay_model.fit(trainX, trainY)
+        self.click_model.fit(x_clicks, y_clicks)
+        self.pay_model.fit(x_pay, y_pay)
 
     def _bidding_function(self, utility=None, cost=None, x=None):
         is_click = self.click_model.predict(x)
@@ -24,9 +30,3 @@ class EnsembleBiddingAgent(BiddingAgent):
             return pay_prediction
         else:
             return 0
-
-    def format_data(self, data):
-        pass
-
-    def downsample_training_set(self):
-        pass
