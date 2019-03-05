@@ -1,4 +1,5 @@
 import numpy as np
+import seaborn
 import matplotlib
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D  # used for 3D plot
@@ -50,3 +51,11 @@ def ranked_plot(x, y, z, t):
 
     plt.draw()
     plt.savefig("../Plots/multiple_rand2.svg", transparent=True, format='svg', frameon=False)
+
+
+def plot_distribution(vector, x_distribution, y_distribution, name):
+    distribution_plot = seaborn.distplot(vector, color='cadetblue')
+    distribution_plot.plot(x_distribution, y_distribution, color='darkorange')
+    figure = distribution_plot.get_figure()
+    path = "../Plots/" + name + ".svg"
+    figure.savefig(path, transparent=True, format='svg', frameon=False)
