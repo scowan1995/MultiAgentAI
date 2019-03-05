@@ -7,6 +7,7 @@ from Configs.configs import configs
 from Model.logistic_regression import Logistic_Regression
 from Bidders.constant_bidding_agent import ConstantBiddingAgent
 from Bidders.random_bidding_agent import RandomBiddingAgent
+from Bidders.budget_aware_logistic_regression_bidding_agent import BudgetAwareLogisticRegressionBiddingAgent
 from Rtb.rtb_ad_exchange import RtbAdExchange
 # from Model.neural_network import
 
@@ -38,7 +39,7 @@ def main():
     # SINGLE RANDOM BIDDER_________________________________________________________
     if configs['random_bidding']:
         # define bidder using 'train' set
-        random_bidder = RandomBiddingAgent(training_set=sets['mock'],
+        random_bidder = RandomBiddingAgent(training_set=sets['train'],
                                            initial_budget=bidder_budget)
         # normal usage of the bidder
         single_agent_interact_with_rtb(random_bidder, rtb, sets, print_results=True)
@@ -80,6 +81,12 @@ def main():
     if configs['logistic_regression']:
         logistic_regression = Logistic_Regression(sets['mock'].data_features, sets['mock'].data_targets)
         print(logistic_regression.score)
+
+    if configs['budget_aware_logistic_regression']:
+        log_reg_bidder = BudgetAwareLogisticRegressionBiddingAgent(training_set=sets['train'],
+                                                                   initial_budget=bidder_budget)
+        log_reg_bidder.set_campaign_duration_from_set(sets['val'])
+        single_agent_interact_with_rtb(log_reg_bidder, rtb, sets, print_results=True)
 
 
 if __name__ == "__main__":

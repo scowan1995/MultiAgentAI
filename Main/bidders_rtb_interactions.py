@@ -2,8 +2,9 @@ from .plot_utils import *
 
 
 def single_agent_interact_with_rtb(bidder, rtb, sets, print_results=False):
-    for (_, features_row), (_, targets_row) in zip(sets['mock'].get_feature_iterator(),
-                                                   sets['mock'].get_targets_iterator()):
+    counter = 0
+    for (_, features_row), (_, targets_row) in zip(sets['val'].get_feature_iterator(),
+                                                   sets['val'].get_targets_iterator()):
 
         rtb.evaluate_known_auction(targets_row)
 
@@ -17,6 +18,11 @@ def single_agent_interact_with_rtb(bidder, rtb, sets, print_results=False):
         # agent receives win notice from RTB ad exchange (until his last bid => before finishing budget)
         if bidder.can_bid:
             bidder.read_win_notice(cost=pay_price, click=click)
+
+            if counter % 1000 == 0:
+                print(f"Iteration n {counter}. Bids won = {bidder.get_bids_won()}. "
+                      f"Clicks = {bidder.clicks_obtained}. Budget = {bidder.get_current_budget()}")
+        counter += 1
 
     if print_results:
         print(f"Final budget = {bidder.get_current_budget()}. "
