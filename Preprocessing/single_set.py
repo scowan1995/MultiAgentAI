@@ -13,7 +13,6 @@ class SingleSet(object):
     def __init__(self, relative_path=None, data=None, use_numerical_labels=True):
         self.data = data
         self.data_features = data
-        self.data_features_scaled_np = None  # available only after preprocessing scaling
         self.data_targets = None
         self.label_to_numerical_mapping = None
 
@@ -118,6 +117,14 @@ class SingleSet(object):
         for feature_name in features_to_drop:
             if feature_name in remained_features:
                 remained_features.drop(feature_name, axis=1, inplace=True)
+        return remained_features
+
+    @staticmethod
+    def drop_features_from_single_row(row, features_to_drop):
+        remained_features = row.copy()
+        for feature_name in features_to_drop:
+            if feature_name in remained_features:
+                remained_features.drop(feature_name, inplace=True)
         return remained_features
 
     def scale(self):
