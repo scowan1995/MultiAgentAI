@@ -86,6 +86,7 @@ def main():
         log_reg_bidder = BudgetAwareLogisticRegressionBiddingAgent(training_set=sets['train'],
                                                                    initial_budget=bidder_budget)
         log_reg_bidder.set_campaign_duration_from_set(sets['val'])
+        log_reg_bidder.fit_and_show_marketprice_gamma_distribution(sets['train'])
         single_agent_interact_with_rtb(log_reg_bidder, rtb, sets, print_results=True)
 
 
