@@ -1,8 +1,10 @@
 from Preprocessing.single_set import SingleSet
 from Bidders.basic_bidding_agent import BasicBiddingAgent
+from Main.plot_utils import *
 
 import numpy as np
 from sklearn.linear_model import LogisticRegression
+import scipy.stats as stats
 
 
 class BudgetAwareLogisticRegressionBiddingAgent(BasicBiddingAgent):
@@ -10,6 +12,7 @@ class BudgetAwareLogisticRegressionBiddingAgent(BasicBiddingAgent):
         self._campaign_budget = initial_budget
         self._campaign_duration = campaign_duration
         self._price_market_upper_bound = 0
+        self._fitted_gamma_marketprice = None
 
         self._current_features = None
         self._features_to_drop = ['userid', 'urlid', 'bidid', 'domain', 'region', 'url', 'keypage', 'city']
@@ -60,10 +63,23 @@ class BudgetAwareLogisticRegressionBiddingAgent(BasicBiddingAgent):
 
     def _compute_price_market_upper_bound(self, training_set):
         max_payprice = training_set.data_targets['payprice'].max()
-        diff = training_set.data_targets['bidprice'] - training_set.data_targets['payprice']
-        epsilon = diff.mean()
+        # diff = training_set.data_targets['bidprice'] - training_set.data_targets['payprice']
+        # epsilon = diff.mean()
         # max_bidprice = training_set.data_targets.loc[lambda x: x["click"] == 1, "payprice"]
         self._price_market_upper_bound = max_payprice  # + epsilon
+
+    def fit_and_show_marketprice_gamma_distribution(self, training_set):
+        market_price = np.asarray(training_set.data_targets['payprice'])
+        min_market_price = training_set.data_targets['payprice'].min()
+        max_market_price = training_set.data_targets['payprice'].max()
+
+        shape, loc, scale = stats.gamma.fit(market_price)
+        self._fitted_gamma_marketprice = lambda x: stats.gamma.pdf(x=x, a=shape, loc=loc, scale=scale)
+
+        x_gamma = np.linspace(min_market_price, max_market_price, 100)
+        y_gamma = self._fitted_gamma_marketprice(x_gamma)
+
+        plot_distribution(market_price, x_gamma, y_gamma, "marketprice_distribution")
 
     def set_campaign_duration_from_set(self, campaign_set):
         self._campaign_duration = len(campaign_set.data.index)
