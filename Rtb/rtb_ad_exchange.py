@@ -14,7 +14,7 @@ class RtbAdExchange:
         :param known_auction_outcome: this is a targets row, which can come from the validation sets
         """
         self._bids = []
-        self._bids.append(known_auction_outcome['bidprice'])
+        self._bids.append(known_auction_outcome['payprice'])
         self._cost = known_auction_outcome['payprice']
         self._click = bool(known_auction_outcome['click'])
 

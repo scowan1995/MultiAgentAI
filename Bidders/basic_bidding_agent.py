@@ -9,6 +9,7 @@ class BasicBiddingAgent:
         self.clicks_obtained = 0
         self._total_paid = 0
         self._bids_won = 0
+        self._placed_bids = 0
 
         self._train(training_set)
 
@@ -38,6 +39,7 @@ class BasicBiddingAgent:
 
     def bid(self, ad_user_auction_info=None):
         """Receive a bid request and return the bid"""
+        self._placed_bids += 1
         self._process_bid_request(ad_user_auction_info)
         # if bidder doesn't have money to place the bid he would like,
         # it still try to bid all the remained budget hoping in good luck
@@ -93,6 +95,6 @@ class BasicBiddingAgent:
         self._current_slot_price = ad_user_auction_info['slotprice']
         self._bid_value = self._bidding_function()
 
-    def _bidding_function(self, utility=None, cost=None, x=None):
+    def _bidding_function(self):
         """Deploy the learned bidding model"""
         raise NotImplementedError

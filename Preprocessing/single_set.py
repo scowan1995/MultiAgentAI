@@ -93,7 +93,7 @@ class SingleSet(object):
 
     def numericalize_labels(self):
         """
-        numericalizes categorical columns in pandas dataframe
+        numericalize categorical columns in pandas dataframe
         """
         le = LabelEncoder()
         le_mapping = dict()
@@ -111,6 +111,21 @@ class SingleSet(object):
                 le_mapping[col] = dict(zip(le.classes_, le.transform(le.classes_)))
         self.data_features = data
         self.label_to_numerical_mapping = le_mapping
+
+    def drop_features(self, features_to_drop):
+        remained_features = self.data_features.copy()
+        for feature_name in features_to_drop:
+            if feature_name in remained_features:
+                remained_features.drop(feature_name, axis=1, inplace=True)
+        return remained_features
+
+    @staticmethod
+    def drop_features_from_single_row(row, features_to_drop):
+        remained_features = row.copy()
+        for feature_name in features_to_drop:
+            if feature_name in remained_features:
+                remained_features.drop(feature_name, inplace=True)
+        return remained_features
 
     def scale(self):
         """

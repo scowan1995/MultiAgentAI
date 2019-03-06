@@ -1,4 +1,6 @@
+import numpy as np
 import sklearn.model_selection as ms
+from sklearn.preprocessing import MinMaxScaler
 from .single_set import SingleSet
 from Configs.configs import statics
 
@@ -31,3 +33,17 @@ def load_all_datasets(sets_info):
             loaded_sets[current_set_name] = SingleSet(relative_path=statics['data'][current_set_name],
                                                       use_numerical_labels=True)
     return loaded_sets
+
+
+def scale_all_sets_features(sets):
+    grouped = []
+    for _, current_set in sets.items():
+        set_features_np = np.asarray(current_set.data_features.values)
+        grouped.append(set_features_np)
+    grouped_np = np.vstack(grouped)
+
+    feature_scaler = MinMaxScaler(feature_range=(0, 1))
+    feature_scaler.fit(grouped_np)
+
+    for _, current_set in sets.items():
+        current_set.data_features_scaled_np = feature_scaler.transform(current_set.data_features.values)

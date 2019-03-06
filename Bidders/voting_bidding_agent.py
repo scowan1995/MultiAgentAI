@@ -12,6 +12,7 @@ import numpy as np
 import sys
 import os
 
+<<<<<<< HEAD
 from basic_bidding_agent import BasicBiddingAgent
 from bidder_utils import BidderUtils
 
@@ -19,6 +20,16 @@ from bidder_utils import BidderUtils
 class EnsembleBiddingAgent(BasicBiddingAgent):
     def __init__(self, training_set, initial_budget, estimators):
         self.estimators = estimators
+=======
+from .basic_bidding_agent import BasicBiddingAgent
+from .bidder_utils import BidderUtils
+
+
+class EnsembleBiddingAgent(BasicBiddingAgent):
+
+    def __init__(self, training_set, initial_budget, click_models):
+        self.estimators = [LogisticRegression(class_weight="balanced", max_iter=500)]
+>>>>>>> b6c46cec8cfb1d2aa8ccff09f5a274d2e513a21b
         self.utils = BidderUtils()
         self.click_model = None
         self.pay_model = GradientBoostingRegressor()
