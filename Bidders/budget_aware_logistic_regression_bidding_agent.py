@@ -68,7 +68,7 @@ class BudgetAwareLogisticRegressionBiddingAgent(BasicBiddingAgent):
         # max_bidprice = training_set.data_targets.loc[lambda x: x["click"] == 1, "payprice"]
         self._price_market_upper_bound = max_payprice  # + epsilon
 
-    def fit_and_show_marketprice_gamma_distribution(self, training_set):
+    def fit_and_show_marketprice_gamma_distribution(self, training_set, plot=True):
         market_price = np.asarray(training_set.data_targets['payprice'])
         min_market_price = training_set.data_targets['payprice'].min()
         max_market_price = training_set.data_targets['payprice'].max()
@@ -79,7 +79,8 @@ class BudgetAwareLogisticRegressionBiddingAgent(BasicBiddingAgent):
         x_gamma = np.linspace(min_market_price, max_market_price, 100)
         y_gamma = self._fitted_gamma_marketprice(x_gamma)
 
-        plot_distribution(market_price, x_gamma, y_gamma, "marketprice_distribution")
+        if plot:
+            plot_distribution(market_price, x_gamma, y_gamma, "marketprice_distribution")
 
     def set_campaign_duration_from_set(self, campaign_set):
         self._campaign_duration = len(campaign_set.data.index)
