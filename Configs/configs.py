@@ -53,6 +53,10 @@ def make_statics_configs():
 
         # --- Neural Network ---
 
+
+        # --- Multi Agent ---
+        'budget_aware_logistic_regression': False,
+
     }
 
     return statics, configs
