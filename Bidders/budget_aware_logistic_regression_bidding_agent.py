@@ -12,7 +12,7 @@ class BudgetAwareLogisticRegressionBiddingAgent(BasicBiddingAgent):
         self._campaign_budget = initial_budget
         self._campaign_duration = campaign_duration
         self._price_market_upper_bound = 0
-        self._fitted_gamma_marketprice = None
+        self._fitted_marketprice_distribution = None
 
         self._current_features = None
         self._features_to_drop = ['userid', 'urlid', 'bidid', 'domain', 'region', 'url', 'keypage', 'city']
@@ -68,18 +68,34 @@ class BudgetAwareLogisticRegressionBiddingAgent(BasicBiddingAgent):
         # max_bidprice = training_set.data_targets.loc[lambda x: x["click"] == 1, "payprice"]
         self._price_market_upper_bound = max_payprice  # + epsilon
 
-    def fit_and_show_marketprice_gamma_distribution(self, training_set):
+    def fit_marketprice_gamma_distribution(self, training_set):
         market_price = np.asarray(training_set.data_targets['payprice'])
         min_market_price = training_set.data_targets['payprice'].min()
         max_market_price = training_set.data_targets['payprice'].max()
 
         shape, loc, scale = stats.gamma.fit(market_price)
-        self._fitted_gamma_marketprice = lambda x: stats.gamma.pdf(x=x, a=shape, loc=loc, scale=scale)
+        self._fitted_marketprice_distribution = lambda x: stats.gamma.pdf(x=x, a=shape, loc=loc, scale=scale)
 
         x_gamma = np.linspace(min_market_price, max_market_price, 100)
-        y_gamma = self._fitted_gamma_marketprice(x_gamma)
+        y_gamma = self._fitted_marketprice_distribution(x_gamma)
 
         plot_distribution(market_price, x_gamma, y_gamma, "marketprice_distribution")
+        return self._fitted_marketprice_distribution, min_market_price, max_market_price
+
+    def fit_marketprice_log_normal_distribution(self, training_set, plot=True):
+        market_price = np.asarray(training_set.data_targets['payprice'])
+        min_market_price = training_set.data_targets['payprice'].min()
+        max_market_price = training_set.data_targets['payprice'].max()
+
+        shape, loc, scale = stats.lognorm.fit(market_price)
+        self._fitted_marketprice_distribution = lambda x: stats.lognorm.pdf(x=x, a=shape, loc=loc, scale=scale)
+
+        x_lognorm = np.linspace(min_market_price, max_market_price, 100)
+        y_lognorm = self._fitted_marketprice_distribution(x_lognorm)
+
+        if plot:
+            plot_distribution(market_price, x_lognorm, y_lognorm, "marketprice_distribution")
+        return self._fitted_marketprice_distribution, min_market_price, max_market_price
 
     def set_campaign_duration_from_set(self, campaign_set):
         self._campaign_duration = len(campaign_set.data.index)
