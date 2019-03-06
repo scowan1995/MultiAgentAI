@@ -8,7 +8,7 @@ import scipy.stats as stats
 
 
 class BudgetAwareLogisticRegressionBiddingAgent(BasicBiddingAgent):
-    def __init__(self, training_set, initial_budget, campaign_duration=None):
+    def __init__(self, training_set, initial_budget, campaign_duration=None, train_flag=True):
         self._campaign_budget = initial_budget
         self._campaign_duration = campaign_duration
         self._price_market_upper_bound = 0
@@ -19,7 +19,7 @@ class BudgetAwareLogisticRegressionBiddingAgent(BasicBiddingAgent):
 
         self._logistic_regressor = None
 
-        super().__init__(training_set, initial_budget)
+        super().__init__(training_set, initial_budget, train_flag=train_flag)
 
     def _train(self, training_set):
         self._compute_price_market_upper_bound(training_set)
@@ -33,7 +33,7 @@ class BudgetAwareLogisticRegressionBiddingAgent(BasicBiddingAgent):
         self._bid_value = self._bidding_function()
 
     def _bidding_function(self):
-        if self._campaign_duration is None:
+        if self._campaign_duration is None or self._price_market_upper_bound is None:
             raise ValueError
         r = self._click_probability()
         # b = self._campaign_budget
@@ -57,6 +57,8 @@ class BudgetAwareLogisticRegressionBiddingAgent(BasicBiddingAgent):
         print("\n-- logistic regression completed --")
 
     def _click_probability(self):
+        if self._logistic_regressor is None:
+            raise ValueError
         single_feature_vector = self._current_features.reshape(1, -1)
         click_predictions_prob = self._logistic_regressor.predict_proba(single_feature_vector)
         return click_predictions_prob
@@ -82,9 +84,26 @@ class BudgetAwareLogisticRegressionBiddingAgent(BasicBiddingAgent):
         if plot:
             plot_distribution(market_price, x_gamma, y_gamma, "marketprice_distribution")
 
+    def get_fitted_marketprice_distribution(self):
+        return self._fitted_gamma_marketprice
+
+    def get_marketprice_upperbound(self):
+        return self._price_market_upper_bound
+
+    def get_trained_logistic_regressor(self):
+        return self._logistic_regressor
+
     def set_campaign_duration_from_set(self, campaign_set):
         self._campaign_duration = len(campaign_set.data.index)
 
     def set_features_to_drop(self, drop):
         self._features_to_drop = drop
 
+    def set_marketprice_distribution(self, distribution):
+        self._fitted_gamma_marketprice = distribution
+
+    def set_marketprice_upperbound(self, bound):
+        self._price_market_upper_bound = bound
+
+    def set_logistic_regressor(self, logistic_regressor):
+        self._logistic_regressor = logistic_regressor
