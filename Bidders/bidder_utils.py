@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 from sklearn.utils import shuffle
-from sklearn.model_selection import train_test_split
 
 
 class BidderUtils:
@@ -45,32 +44,38 @@ class BidderUtils:
             catagories.extend(["usertag", "useragent"])
         for cat in catagories:
             data[cat] = data[cat].astype("category").cat.codes
+        return data
 
-    def format_data(self, data, target=None, split_useragent=True):
+    def format_data(self, data, target=None, split_useragent=True, shuf=True):
         """
         Formats the data by splitting user agent into os and browser
         makes the usertag list into catagories
         drops columns that can't be used in prediction
         converts non numerics to catagories
         """
-        data = shuffle(data)
+        if shuf:
+            data = shuffle(data)
         if split_useragent:
             data = self.split_useragent_feature(data)
         data = self.catagorise_usertag(data)
 
         X = self.get_input_data(data)
         X = self.catagorise_numerics(X, split_useragent)
-        Y = data.loc[:, target]
+        Y = None
+        if target is not None:
+            Y = data.loc[:, target]
 
         if self.debug_flag:
             print("X:")
             print(X)
             print("Y:")
             print(Y)
+        if Y is None:
+            return X
 
         return X, Y
 
-    def downsample_data(self, X, Y):
+    def downsample_data(self, X, Y=None):
         """
         Downsample the data so we have equal clicks, no clicks
         """
