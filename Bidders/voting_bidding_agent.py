@@ -12,7 +12,6 @@ import numpy as np
 import sys
 import os
 
-<<<<<<< HEAD
 from basic_bidding_agent import BasicBiddingAgent
 from bidder_utils import BidderUtils
 
@@ -20,16 +19,6 @@ from bidder_utils import BidderUtils
 class EnsembleBiddingAgent(BasicBiddingAgent):
     def __init__(self, training_set, initial_budget, estimators):
         self.estimators = estimators
-=======
-from .basic_bidding_agent import BasicBiddingAgent
-from .bidder_utils import BidderUtils
-
-
-class EnsembleBiddingAgent(BasicBiddingAgent):
-
-    def __init__(self, training_set, initial_budget, click_models):
-        self.estimators = [LogisticRegression(class_weight="balanced", max_iter=500)]
->>>>>>> b6c46cec8cfb1d2aa8ccff09f5a274d2e513a21b
         self.utils = BidderUtils()
         self.click_model = None
         self.pay_model = GradientBoostingRegressor()
@@ -47,14 +36,22 @@ class EnsembleBiddingAgent(BasicBiddingAgent):
         x_pay, self.xpay_val, y_pay, self.y_pay_val = train_test_split(
             x_pay, y_pay, test_size=0.1
         )
-        x_clicks.to_csv("./Data/xclicks.csv", index=False)
-        y_clicks.to_csv("./Data/y_clicks.csv", index=False)
-        self.xclicks_val("./Data/xclicksval.csv", index=False)
-        self.y_clicks_val("./Data/yclicksval.csv", index=False)
-        x_pay.to_csv("./Data/xpay.csv", index=False)
-        y_pay.to_csv("./Data/y_pay.csv", index=False)
-        self.xpay_val("./Data/xpayval.csv", index=False)
-        self.y_pay_val("./Data/ypayval.csv", index=False)
+        print("saving data")
+        x_clicks.to_csv("./Data/saved/xclicks.csv", index=False)
+        print("a")
+        y_clicks.to_csv("./Data/saved/y_clicks.csv", index=False)
+        print("a")
+        self.xclicks_val.to_csv("./Data/saved/xclicksval.csv", index=False)
+        print("a")
+        self.y_clicks_val.to_csv("./Data/saved/yclicksval.csv", index=False)
+        print("a")
+        x_pay.to_csv.to_csv("./Data/saved/xpay.csv", index=False)
+        print("a")
+        y_pay.to_csv("./Data/saved/y_pay.csv", index=False)
+        print("a")
+        self.xpay_val.to_csv("./Data/saved/xpayval.csv", index=False)
+        print("a")
+        self.y_pay_val.to_csv("./Data/saved/ypayval.csv", index=False)
         print("Data saved")
 
         self.click_model = VotingClassifier(self.estimators, voting="soft", n_jobs=-1)
@@ -64,9 +61,10 @@ class EnsembleBiddingAgent(BasicBiddingAgent):
     def test(self, val):
         print("testing...")
         res = self.click_model.predict(val)
-        np.savetxt("click_predictions.csv", res, delimiter=",")
+        np.savetxt("Data/saved/click_predictions.csv", res, delimiter=",")
+  
         res = self.pay_model.predict(val).multiply(1.5)
-        np.savetxt("pay_predictions.csv", res, delimiter=",")
+        np.savetxt("Data/saved/pay_predictions_15.csv", res, delimiter=",")
         return (
             self.click_model.score(self.xclicks_val, self.y_clicks_val),
             self.pay_model.score(self.xpay_val, self.y_pay_val),
@@ -99,36 +97,42 @@ if __name__ == "__main__":
     x, y = utils.downsample_data(fx, fy)
     x, y = shuffle(x, y)
     xtrain, xtest, ytrain, ytest = train_test_split(x, y, test_size=0.15)
-    x.to_csv("Data/x.csv", index=False)
-    y.to_csv("Data/y.csv", index=False)
-    xtrain.to_csv('./Data/xtrain.csv', index=False)
-    xtest.to_csv('./Data/xtest.csv', index=False)
-    ytrain.to_csv('./Data/ytrain.csv', index=False)
-    ytest.to_csv('./Data/test_saved.csv', index=False)
+    x.to_csv("Data/saved/x.csv", index=False)
+    print("1")
+    y.to_csv("Data/saved/y.csv", index=False)
+    print("2")
+    xtrain.to_csv('./Data/saved/xtrain.csv', index=False)
+    print("3")
+    xtest.to_csv('./Data/saved/xtest.csv', index=False)
+    print("4")
+    ytrain.to_csv('./Data/saved/ytrain.csv', index=False)
+    print("5")
+    ytest.to_csv('./Data/saved/test_saved.csv', index=False)
+    print("6")
     valx = utils.format_data(v)
     print("column matching:")
     val_formatted = utils.format_data(val, shuf=False)
-    val_formatted.to_csv('./Data/val_formatted.csv', index=False)
+    val_formatted.to_csv('./Data/saved/val_formatted.csv', index=False)
     notinVal = [i for i in x.columns if i not in val_formatted.columns]
     notinTrain = [i for i in val_formatted.columns if i not in x.columns]
     print(notinVal)
     print(notinTrain)
 
     print("svm")
-    svm = SVC(kernel="poly", cache_size=1024, class_weight="balanced", max_iter=50)
-    svm.fit(x, y)
-    print("svm score:", svm.score(xtest, ytest))
-
+    svm = SVC(kernel="poly", cache_size=1024, class_weight="balanced", max_iter=500)
+   # svm.fit(x, y)
+#
     print("logistic regression")
-    lr = LogisticRegression(class_weight="balanced", max_iter=50)
+    lr = LogisticRegression(class_weight="balanced", max_iter=100)
     lr.fit(x, y)
-    score = lr.score(xtest, ytest)
-    print("lr score:", score)
+    res = lr.predict_proba(val_formatted)
+    np.savetxt("Data/saved/click_probab.csv", res, delimiter=",")
+   # score = lr.score(xtest, ytest)
 
     print("random forest")
-    rf = RandomForestClassifier(n_estimators=10, class_weight="balanced", n_jobs=-1)
-    rf.fit(x, y)
-    print("RF score:", rf.score(xtest, ytest))
+    rf = RandomForestClassifier(n_estimators=3000, class_weight="balanced", n_jobs=-1)
+   # rf.fit(x, y)
+   # print("RF score:", rf.score(xtest, ytest))
 
     e = EnsembleBiddingAgent(
         train,
