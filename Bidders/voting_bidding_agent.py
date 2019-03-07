@@ -21,54 +21,45 @@ class EnsembleBiddingAgent(BasicBiddingAgent):
         self.estimators = estimators
         self.utils = BidderUtils()
         self.click_model = None
-        self.pay_model = GradientBoostingRegressor()
+        self.pay_model = GradientBoostingRegressor(n_estimators=3000)
 
         super().__init__(training_set, initial_budget)
 
     def _train(self, training_set):
         print("training...")
-        x_clicks, y_clicks = self.utils.format_data(training_set, target="click")
+        x_clicks, y_clicks = self.utils.format_data(training_set.copy(), target="click")
         x_clicks, y_clicks = self.utils.downsample_data(x_clicks, y_clicks)
-        x_clicks, self.xclicks_val, y_clicks, self.y_clicks_val = train_test_split(
-            x_clicks, y_clicks, test_size=0.15
-        )
-        x_pay, y_pay = self.utils.format_data(training_set, target="payprice")
-        x_pay, self.xpay_val, y_pay, self.y_pay_val = train_test_split(
-            x_pay, y_pay, test_size=0.1
-        )
-        print("saving data")
-        x_clicks.to_csv("./Data/saved/xclicks.csv", index=False)
-        print("a")
-        y_clicks.to_csv("./Data/saved/y_clicks.csv", index=False)
-        print("a")
-        self.xclicks_val.to_csv("./Data/saved/xclicksval.csv", index=False)
-        print("a")
-        self.y_clicks_val.to_csv("./Data/saved/yclicksval.csv", index=False)
-        print("a")
-        x_pay.to_csv.to_csv("./Data/saved/xpay.csv", index=False)
-        print("a")
-        y_pay.to_csv("./Data/saved/y_pay.csv", index=False)
-        print("a")
-        self.xpay_val.to_csv("./Data/saved/xpayval.csv", index=False)
-        print("a")
-        self.y_pay_val.to_csv("./Data/saved/ypayval.csv", index=False)
-        print("Data saved")
-
+        #x_clicks, self.xclicks_val, y_clicks, self.y_clicks_val = train_test_split(
+        #    x_clicks, y_clicks, test_size=0.15
+        #)
+        x_pay, y_pay = self.utils.format_data(training_set.copy(), target="payprice")
+        x_pay, y_pay = self.utils.downsample_data(x_pay, y_pay)
+        print("Y pay", y_pay)
+        #x_pay, self.xpay_val, y_pay, self.y_pay_val = train_test_split(
+        #    x_pay, y_pay, test_size=0.1
+        #)
         self.click_model = VotingClassifier(self.estimators, voting="soft", n_jobs=-1)
         self.click_model.fit(x_clicks, y_clicks)
         self.pay_model.fit(x_pay, y_pay)
 
-    def test(self, val):
-        print("testing...")
-        res = self.click_model.predict(val)
-        np.savetxt("Data/saved/click_predictions.csv", res, delimiter=",")
-  
-        res = self.pay_model.predict(val).multiply(1.5)
-        np.savetxt("Data/saved/pay_predictions_15.csv", res, delimiter=",")
-        return (
-            self.click_model.score(self.xclicks_val, self.y_clicks_val),
-            self.pay_model.score(self.xpay_val, self.y_pay_val),
-        )
+    def test(self, test, test_y_click, test_y_payprice, cols):
+        print("testing")
+        test_x = test.loc[:, cols]
+        print("Click score", self.click_model.score(test_x, test_y_click))
+        print("Payprice score", self.pay_model.score(test_x, test_y_payprice))
+        test_modelled_click = self.click_model.predict_proba(test_x)[:, 1]
+        test_modelled_pay = self.pay_model.predict(test_x)
+        test_moddelled = pd.concat([pd.DataFrame(test_modelled_click), pd.DataFrame(test_modelled_pay)], axis=1)
+        test_moddelled.to_csv("Data/saved/test_set_modelled.csv")
+        return test_moddelled
+        
+    def create_val_preds(self, val):
+        val_click = self.click_model.predict_proba(val)[:, 1]
+        val_pay = self.pay_model.predict(val)
+        val_modelled = pd.concat([pd.DataFrame(val_click), pd.DataFrame(val_pay)], axis=1)
+        val_modelled.to_csv("Data/saved/Validation_modelled.csv")
+        return val_modelled
+
 
     def _bidding_function(self, utility=None, cost=None, x=None):
         is_click = self.click_model.predic_proba(x) > 0.3
@@ -80,63 +71,47 @@ class EnsembleBiddingAgent(BasicBiddingAgent):
 
 
 def get_training_set():
-    data_path = os.path.abspath(os.pardir + "/MultiAgentAI/Data/train.csv")
+    data_path = os.path.abspath(os.pardir + "/MultiAgentAI/Data/train_small.csv")
+    test_path = os.path.abspath(os.pardir + "/MultiAgentAI/Data/test_small.csv")
     val_path = os.path.abspath(os.pardir + "/MultiAgentAI/Data/validation.csv")
     train = pd.read_csv(data_path, na_values=["Na", "null"]).fillna(0)
+    test = pd.read_csv(test_path, na_values=["Na", "null"]).fillna(0)
     val = pd.read_csv(val_path, na_values=["Na", "null"]).fillna(0)
-    return train, val
+    return train, val, test
 
 
 if __name__ == "__main__":
     utils = BidderUtils()
-    train, val = get_training_set()
-    t = train.copy()
-    v = val.copy()
-    print("data copied")
-    fx, fy = utils.format_data(t, target="click")
-    x, y = utils.downsample_data(fx, fy)
-    x, y = shuffle(x, y)
-    xtrain, xtest, ytrain, ytest = train_test_split(x, y, test_size=0.15)
-    x.to_csv("Data/saved/x.csv", index=False)
-    print("1")
-    y.to_csv("Data/saved/y.csv", index=False)
-    print("2")
-    xtrain.to_csv('./Data/saved/xtrain.csv', index=False)
-    print("3")
-    xtest.to_csv('./Data/saved/xtest.csv', index=False)
-    print("4")
-    ytrain.to_csv('./Data/saved/ytrain.csv', index=False)
-    print("5")
-    ytest.to_csv('./Data/saved/test_saved.csv', index=False)
-    print("6")
-    valx = utils.format_data(v)
-    print("column matching:")
-    val_formatted = utils.format_data(val, shuf=False)
-    val_formatted.to_csv('./Data/saved/val_formatted.csv', index=False)
-    notinVal = [i for i in x.columns if i not in val_formatted.columns]
-    notinTrain = [i for i in val_formatted.columns if i not in x.columns]
+    train, test, val = get_training_set()
+    """
+    fx, fy = utils.format_data(train, target="click", shuff=False)
+    trainx, trainy = utils.downsample_data(fx, fy)
+    val = utils.format_data(val, shuf=False)
+    notinVal = [i for i in trainx.columns if i not in val.columns]
+    notinTrain = [i for i in val.columns if i not in trainx.columns]
+    print("Any columns not in val or train:")
     print(notinVal)
     print(notinTrain)
+    """
+    val = utils.format_data(val, shuf=False)
+    test, test_click, test_pay = utils.format_data(test, target=["click", "payprice"], shuf=False)
+    print("test", test.shape, " cols", test.columns)
+    print("test clcik", test_click.shape)
+    print("test_pay", test_pay.shape)
 
     print("svm")
-    svm = SVC(kernel="poly", cache_size=1024, class_weight="balanced", max_iter=500)
-   # svm.fit(x, y)
-#
+    svm = SVC(kernel="poly", cache_size=1024, probability=True, class_weight="balanced", max_iter=500)
+
     print("logistic regression")
     lr = LogisticRegression(class_weight="balanced", max_iter=100)
-    lr.fit(x, y)
-    res = lr.predict_proba(val_formatted)
-    np.savetxt("Data/saved/click_probab.csv", res, delimiter=",")
-   # score = lr.score(xtest, ytest)
 
     print("random forest")
     rf = RandomForestClassifier(n_estimators=3000, class_weight="balanced", n_jobs=-1)
-   # rf.fit(x, y)
-   # print("RF score:", rf.score(xtest, ytest))
 
     e = EnsembleBiddingAgent(
         train,
         6250 * 1000,
         list([("logistic classifier", lr), ("SVM", svm), ("Random Forest", rf)]),
     )
-    print(e.test(val_formatted))
+    e.test(test, test_click, test_pay, val.columns)
+    e.create_val_preds(val)

@@ -46,7 +46,7 @@ class BidderUtils:
             data[cat] = data[cat].astype("category").cat.codes
         return data
 
-    def format_data(self, data, target=None, split_useragent=True, shuf=True):
+    def format_data(self, data, target=None, split_useragent=True, shuf=False):
         """
         Formats the data by splitting user agent into os and browser
         makes the usertag list into catagories
@@ -62,8 +62,13 @@ class BidderUtils:
         X = self.get_input_data(data)
         X = self.catagorise_numerics(X, split_useragent)
         Y = None
-        if target is not None:
+        if target is not None and type(target) is str:
             Y = data.loc[:, target]
+        elif target is not None:
+            ys = [0, 0]
+            for i in range(len(target)):
+                ys[i] = data.loc[:, target[i]]
+            Y = ys
 
         if self.debug_flag:
             print("X:")
@@ -71,11 +76,13 @@ class BidderUtils:
             print("Y:")
             print(Y)
         if Y is None:
-            return X
+            return self.normalized_df(X)
+        if type(target) is not str:
+            return self.normalized_df(X), Y[0], Y[1]
 
-        return X, Y
+        return self.normalized_df(X), Y
 
-    def downsample_data(self, X, Y=None):
+    def downsample_data(self, X, Y):
         """
         Downsample the data so we have equal clicks, no clicks
         """
@@ -90,9 +97,20 @@ class BidderUtils:
         y = positive_clicksY.append(negY)
         return x, y
 
+    def normalized_df(self, df: pd.DataFrame):
+        return (df - df.min()) / (df.max() - df.min())
+
     def _get_negatives(self, x, y, pos_clicksX, neg_clicksX, neg_clicksY):
-        ix = np.random.permutation(
-            pos_clicksX.index)[:pos_clicksX.shape[0]]
-        negsX = neg_clicksX.iloc[ix]
-        negsY = neg_clicksY.iloc[ix]
+        ixs = np.random.permutation(neg_clicksX.index)[:pos_clicksX.shape[0]]
+
+        for i in range(len(ixs)):
+            if ixs[i] >= neg_clicksX.shape[0]:
+                ixs[i] = 0
+        print(pos_clicksX)
+        print("pos clicks shape", pos_clicksX.shape)
+        print("ixs", ixs.shape)
+        print("neg click x", neg_clicksX.shape)
+        print("neg click y", neg_clicksY.shape)
+        negsX = neg_clicksX.iloc[ixs]
+        negsY = neg_clicksY.iloc[ixs]
         return negsX, negsY
