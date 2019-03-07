@@ -90,18 +90,23 @@ def main():
         single_agent_interact_with_rtb(log_reg_bidder, rtb, sets, print_results=True)
 
     if configs['multiple_budget_aware']:
-        rtb = RtbAdExchange(sets['train'].data)
-        total_bidders = 50
+        rtb = RtbAdExchange(sets['train'])
+        total_bidders = 20
         first_bidder = BudgetAwareLogisticRegressionBiddingAgent(training_set=sets['train'],
+                                                                 additional_set=sets['train'],
                                                                  initial_budget=bidder_budget)
+        first_bidder.set_campaign_duration_from_set(sets['train'])
+
         bidders = [first_bidder]
         for i in range(total_bidders):
             log_reg_bidder = BudgetAwareLogisticRegressionBiddingAgent(training_set=sets['train'],
+                                                                       additional_set=sets['train'],
                                                                        initial_budget=bidder_budget,
                                                                        train_flag=False)
             log_reg_bidder.set_logistic_regressor(first_bidder.get_trained_logistic_regressor())
             log_reg_bidder.set_marketprice_upperbound(first_bidder.get_marketprice_upperbound())
             log_reg_bidder.set_campaign_duration_from_set(sets['train'])
+            log_reg_bidder.set_click_predictions(first_bidder.get_click_predictions())
             # log_reg_bidder.fit_and_show_marketprice_gamma_distribution(sets['train'], plot=False)
             bidders.append(log_reg_bidder)
         multiagent_bidders_interact_with_rtb_to_generate_new_set(bidders, rtb, sets)
