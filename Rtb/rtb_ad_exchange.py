@@ -12,7 +12,7 @@ class RtbAdExchange:
         self._row_counter = 0
         self._new_set = None
         if set_to_update is not None:
-            self._new_set = set_to_update.copy()
+            self._new_set = set_to_update.data.copy()
             self._new_set['bidprice'] = 0
             self._new_set['payprice'] = 0
 
@@ -53,11 +53,11 @@ class RtbAdExchange:
                 self._new_set.loc[
                     self._new_set.index[self._row_counter], 'payprice'] = self._cost
                 self._new_set.loc[
-                    self._new_set.index[self._row_counter], 'payprice'] = self._bids[-1]
+                    self._new_set.index[self._row_counter], 'bidprice'] = self._bids[-1]
                 self._row_counter += 1
 
         return self._cost, self._click
 
     def retrieve_new_set_after_auction(self, set_name):
-        absolute_path = os.path.abspath(__file__ + "/../../" + set_name + "_pickle")
-        return single_set.SingleSet(relative_path=absolute_path, data=self._new_set)
+        path = "Data/" + set_name + "0000"
+        return single_set.SingleSet(relative_path=path, data=self._new_set)
