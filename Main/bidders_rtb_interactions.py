@@ -99,8 +99,8 @@ def evaluate_multiple_random_bidders_performance(multiple_bidders):
 
 def multiagent_bidders_interact_with_rtb_to_generate_new_set(bidder_agents, rtb, sets):
     counter = 0
-    for (_, features_row), (_, targets_row) in zip(sets['train'].get_feature_iterator(),
-                                                   sets['train'].get_targets_iterator()):
+    for (_, features_row), (_, targets_row) in zip(sets['val'].get_feature_iterator(),
+                                                   sets['val'].get_targets_iterator()):
 
         rtb.evaluate_known_auction(targets_row)
 
