@@ -51,11 +51,15 @@ class EnsembleBiddingAgent(BasicBiddingAgent):
         print("Payprice score", self.pay_model.score(test_x, test_y_payprice))
         test_modelled_click = self.click_model.predict_proba(test_x)[:, 1]
         test_modelled_pay = self.pay_model.predict(test_x)
-        test_moddelled = pd.concat([pd.DataFrame(test_modelled_click), pd.DataFrame(test_modelled_pay)], axis=1)
+        test_moddelled = pd.concat([pd.DataFrame(test_y_payprice), pd.DataFrame(test_modelled_click), pd.DataFrame(test_modelled_pay)], axis=1)
         test_moddelled.to_csv("Data/saved/test_set_modelled.csv")
         return test_moddelled
         
-    def create_val_preds(self, val):
+    def create_val_preds(self, val, train, payprice):
+        train_click = self.click_model.predict_proba(train)[:, 1]
+        train_pay = self.pay_model.predict(train)
+        train_modelled = pd.concat([payprice, pd.DataFrame(train_click), pd.DataFrame(train_pay)], axis = 1)
+        train_modelled.to_csv("Data/saved/Train_modelled.csv")
         val_click = self.click_model.predict_proba(val)[:, 1]
         val_pay = self.pay_model.predict(val)
         val_modelled = pd.concat([pd.DataFrame(val_click), pd.DataFrame(val_pay)], axis=1)
@@ -85,6 +89,7 @@ def get_training_set():
 if __name__ == "__main__":
     utils = BidderUtils()
     train, test, val = get_training_set()
+    training_copy, payprice_copy = utils.format_data(train.copy(), target="payprice", shuf=False)
     """
     fx, fy = utils.format_data(train, target="click", shuff=False)
     trainx, trainy = utils.downsample_data(fx, fy)
@@ -116,4 +121,4 @@ if __name__ == "__main__":
         list([("logistic classifier", lr), ("SVM", svm), ("Random Forest", rf)]),
     )
     e.test(test, test_click, test_pay, val.columns)
-    e.create_val_preds(val)
+    e.create_val_preds(val, training_copy, payprice_copy)
