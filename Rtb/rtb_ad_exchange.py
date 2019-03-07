@@ -1,9 +1,20 @@
+import os
+
+from Preprocessing import single_set
+
 
 class RtbAdExchange:
-    def __init__(self):
+    def __init__(self, set_to_update=None):
         self._bids = []
         self._cost = 0
         self._click = False
+
+        self._row_counter = 0
+        self._new_set = None
+        if set_to_update is not None:
+            self._new_set = set_to_update.data.copy()
+            self._new_set['bidprice'] = 0
+            self._new_set['payprice'] = 0
 
     def evaluate_known_auction(self, known_auction_outcome):
         """ Interpret results of a finished auction
@@ -37,4 +48,16 @@ class RtbAdExchange:
             # update the cost with second highest bid (we are in a second price auction)
             self._cost = self._bids[-2]
 
+            # insert payprice and bidprice in the new set
+            if self._new_set is not None:
+                self._new_set.loc[
+                    self._new_set.index[self._row_counter], 'payprice'] = self._cost
+                self._new_set.loc[
+                    self._new_set.index[self._row_counter], 'bidprice'] = self._bids[-1]
+                self._row_counter += 1
+
         return self._cost, self._click
+
+    def retrieve_new_set_after_auction(self, set_name):
+        path = "Data/" + set_name + "0000"
+        return single_set.SingleSet(relative_path=path, data=self._new_set)

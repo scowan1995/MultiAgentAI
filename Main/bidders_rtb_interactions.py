@@ -1,3 +1,5 @@
+import datetime
+
 from .plot_utils import *
 
 
@@ -37,7 +39,6 @@ def single_agent_interact_with_rtb(bidder, rtb, sets, print_results=False):
 
 
 def multiple_random_bidders_interact_with_rtb(bidder_agents, rtb, sets):
-    auction_counter = 0
     for (_, features_row), (_, targets_row) in zip(sets['val'].get_feature_iterator(),
                                                    sets['val'].get_targets_iterator()):
 
@@ -49,7 +50,6 @@ def multiple_random_bidders_interact_with_rtb(bidder_agents, rtb, sets):
                 rtb.receive_new_bid(bid_value)
 
         pay_price, click = rtb.report_win_notice()
-        auction_counter += 1
 
         for bidder_number, current_bidder in enumerate(bidder_agents):
             if current_bidder.can_bid:
@@ -95,3 +95,31 @@ def evaluate_multiple_random_bidders_performance(multiple_bidders):
           f"std {np.std(cpcs_np[oredered_indeces[-10:]])}")
 
     ranked_plot(lower_boundaries_np, upper_boundaries_np, ctrs_np, clicks_np )
+
+
+def multiagent_bidders_interact_with_rtb_to_generate_new_set(bidder_agents, rtb, sets):
+    counter = 0
+    for (_, features_row), (_, targets_row) in zip(sets['val'].get_feature_iterator(),
+                                                   sets['val'].get_targets_iterator()):
+
+        rtb.evaluate_known_auction(targets_row)
+
+        for bidder_number, current_bidder in enumerate(bidder_agents):
+            if current_bidder.can_bid:
+                noise = np.random.normal(loc=10, scale=5, size=1)  # TODO: find a smarter way!
+                bid_value = current_bidder.bid(features_row) + noise
+                rtb.receive_new_bid(bid_value)
+
+        pay_price, click = rtb.report_win_notice()
+
+        for bidder_number, current_bidder in enumerate(bidder_agents):
+            if current_bidder.can_bid:
+                current_bidder.read_win_notice(cost=pay_price, click=click)
+
+                if counter % 100 == 0:
+                    print(f"Iteration n {counter}, bidder n {bidder_number}")
+        counter += 1
+
+    now = datetime.datetime.now()
+    name = 'new_train_' + str(now)
+    return rtb.retrieve_new_set_after_auction(set_name=name)
