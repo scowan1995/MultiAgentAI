@@ -60,7 +60,8 @@ class BudgetAwareLogisticRegressionBiddingAgent(BasicBiddingAgent):
         training_click_labels = np.asarray(training_set.data_targets['click'])
 
         class_weight = {0: (1793 / 2429188), 1: (1 - (1793 / 2429188))}
-        self._logistic_regressor = LogisticRegression(class_weight=class_weight, C=1.0, penalty='l2', verbose=10)
+        self._logistic_regressor = LogisticRegression(class_weight=class_weight, C=1.0, penalty='l2',
+                                                      verbose=10, n_jobs=-1, multi_class='ovr', solver='saga')
         self._logistic_regressor.fit(training_features, training_click_labels)
 
         print(self._logistic_regressor.coef_)
