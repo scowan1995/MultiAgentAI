@@ -32,14 +32,16 @@ class EnsembleBiddingAgent(BasicBiddingAgent):
         #x_clicks, self.xclicks_val, y_clicks, self.y_clicks_val = train_test_split(
         #    x_clicks, y_clicks, test_size=0.15
         #)
+        print("getting payprice")
         x_pay, y_pay = self.utils.format_data(training_set.copy(), target="payprice")
-        x_pay, y_pay = self.utils.downsample_data(x_pay, y_pay)
+        #x_pay, y_pay = self.utils.downsample_data(x_pay, y_pay)
         print("Y pay", y_pay)
         #x_pay, self.xpay_val, y_pay, self.y_pay_val = train_test_split(
         #    x_pay, y_pay, test_size=0.1
         #)
         self.click_model = VotingClassifier(self.estimators, voting="soft", n_jobs=-1)
         self.click_model.fit(x_clicks, y_clicks)
+        print(y_pay)
         self.pay_model.fit(x_pay, y_pay)
 
     def test(self, test, test_y_click, test_y_payprice, cols):

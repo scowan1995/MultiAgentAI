@@ -64,6 +64,8 @@ class BidderUtils:
         Y = None
         if target is not None and type(target) is str:
             Y = data.loc[:, target]
+            print("GOt Y")
+            print(Y)
         elif target is not None:
             ys = [0, 0]
             for i in range(len(target)):
