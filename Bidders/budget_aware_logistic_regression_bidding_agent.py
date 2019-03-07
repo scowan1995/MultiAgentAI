@@ -8,7 +8,7 @@ import scipy.stats as stats
 
 
 class BudgetAwareLogisticRegressionBiddingAgent(BasicBiddingAgent):
-    def __init__(self, training_set, initial_budget, campaign_duration=None, train_flag=True):
+    def __init__(self, training_set, initial_budget, campaign_duration=None, train_flag=True, additional_set=None):
         self._campaign_budget = initial_budget
         self._campaign_duration = campaign_duration
         self._price_market_upper_bound = 0
@@ -19,11 +19,17 @@ class BudgetAwareLogisticRegressionBiddingAgent(BasicBiddingAgent):
 
         self._logistic_regressor = None
 
+        self._set_to_predict = additional_set
+        self._click_predictions = None
+        self._click_index = 0
+
         super().__init__(training_set, initial_budget, train_flag=train_flag)
 
     def _train(self, training_set):
         self._compute_price_market_upper_bound(training_set)
         self._train_click_probability_predictor(training_set)
+        if self._set_to_predict is not None:
+            self._compute_all_set_click_probabilities_at_once()
 
     def _process_bid_request(self, ad_user_auction_info=None):
         current_features = SingleSet.drop_features_from_single_row(ad_user_auction_info,
@@ -35,13 +41,17 @@ class BudgetAwareLogisticRegressionBiddingAgent(BasicBiddingAgent):
     def _bidding_function(self):
         if self._campaign_duration is None or self._price_market_upper_bound is None:
             raise ValueError
-        r = self._click_probability()
+        if self._click_predictions is not None:
+            r = self._click_predictions[self._click_index][1]
+            self._click_index += 1
+        else:
+            r = self._click_probability()[0][1]
         # b = self._campaign_budget
         b = self._current_budget
         l = self._price_market_upper_bound
         # t = self._campaign_duration
         t = self._campaign_duration - self._placed_bids
-        return 2 * r[0][1] * ((b * l**2) / t)**(1/3)
+        return 2 * r * ((b * l**2) / t)**(1/3)
 
     def _train_click_probability_predictor(self, training_set):
         training_features = training_set
@@ -60,8 +70,17 @@ class BudgetAwareLogisticRegressionBiddingAgent(BasicBiddingAgent):
         if self._logistic_regressor is None:
             raise ValueError
         single_feature_vector = self._current_features.reshape(1, -1)
-        click_predictions_prob = self._logistic_regressor.predict_proba(single_feature_vector)
-        return click_predictions_prob
+        click_prediction_prob = self._logistic_regressor.predict_proba(single_feature_vector)
+        return click_prediction_prob
+
+    def _compute_all_set_click_probabilities_at_once(self):
+        if self._logistic_regressor is None:
+            raise ValueError
+        if self._features_to_drop is not None:
+            featureset = self._set_to_predict.drop_features(self._features_to_drop)
+        else:
+            featureset = self._set_to_predict.data_features
+        self._click_predictions = self._logistic_regressor.predict_proba(featureset)
 
     def _compute_price_market_upper_bound(self, training_set):
         max_payprice = training_set.data_targets['payprice'].max()
