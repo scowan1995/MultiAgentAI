@@ -112,6 +112,9 @@ class BudgetAwareLogisticRegressionBiddingAgent(BasicBiddingAgent):
     def get_trained_logistic_regressor(self):
         return self._logistic_regressor
 
+    def get_click_predictions(self):
+        return self._click_predictions
+
     def set_campaign_duration_from_set(self, campaign_set):
         self._campaign_duration = len(campaign_set.data.index)
 
@@ -126,3 +129,6 @@ class BudgetAwareLogisticRegressionBiddingAgent(BasicBiddingAgent):
 
     def set_logistic_regressor(self, logistic_regressor):
         self._logistic_regressor = logistic_regressor
+
+    def set_click_predictions(self, predictions):
+        self._click_predictions = predictions
