@@ -90,7 +90,7 @@ class BudgetAwareLogisticRegressionBiddingAgent(BasicBiddingAgent):
         # max_bidprice = training_set.data_targets.loc[lambda x: x["click"] == 1, "payprice"]
         self._price_market_upper_bound = max_payprice  # + epsilon
 
-    def fit_marketprice_gamma_distribution(self, training_set):
+    def fit_marketprice_gamma_distribution(self, training_set, plot=True):
         market_price = np.asarray(training_set.data_targets['payprice'])
         min_market_price = training_set.data_targets['payprice'].min()
         max_market_price = training_set.data_targets['payprice'].max()
@@ -103,18 +103,6 @@ class BudgetAwareLogisticRegressionBiddingAgent(BasicBiddingAgent):
 
         if plot:
             plot_distribution(market_price, x_gamma, y_gamma, "marketprice_distribution")
-
-    def get_fitted_marketprice_distribution(self):
-        return self._fitted_gamma_marketprice
-
-    def get_marketprice_upperbound(self):
-        return self._price_market_upper_bound
-
-    def get_trained_logistic_regressor(self):
-        return self._logistic_regressor
-
-    def get_click_predictions(self):
-        return self._click_predictions
 
     def fit_marketprice_log_normal_distribution(self, training_set, plot=True):
         market_price = np.asarray(training_set.data_targets['payprice'])
@@ -130,6 +118,18 @@ class BudgetAwareLogisticRegressionBiddingAgent(BasicBiddingAgent):
         if plot:
             plot_distribution(market_price, x_lognorm, y_lognorm, "marketprice_distribution")
         return self._fitted_marketprice_distribution, min_market_price, max_market_price
+
+    def get_fitted_marketprice_distribution(self):
+        return self._fitted_gamma_marketprice
+
+    def get_marketprice_upperbound(self):
+        return self._price_market_upper_bound
+
+    def get_trained_logistic_regressor(self):
+        return self._logistic_regressor
+
+    def get_click_predictions(self):
+        return self._click_predictions
 
     def set_campaign_duration_from_set(self, campaign_set):
         self._campaign_duration = len(campaign_set.data.index)
