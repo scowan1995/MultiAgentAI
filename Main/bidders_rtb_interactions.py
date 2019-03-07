@@ -98,12 +98,13 @@ def evaluate_multiple_random_bidders_performance(multiple_bidders):
 
 
 def multiagent_bidders_interact_with_rtb_to_generate_new_set(bidder_agents, rtb, sets):
+    counter = 0
     for (_, features_row), (_, targets_row) in zip(sets['train'].get_feature_iterator(),
                                                    sets['train'].get_targets_iterator()):
 
         rtb.evaluate_known_auction(targets_row)
 
-        for current_bidder in bidder_agents:
+        for bidder_number, current_bidder in enumerate(bidder_agents):
             if current_bidder.can_bid:
                 noise = np.random.normal(1)  # TODO: find a smarter way!
                 bid_value = current_bidder.bid(features_row) + noise
@@ -114,6 +115,10 @@ def multiagent_bidders_interact_with_rtb_to_generate_new_set(bidder_agents, rtb,
         for bidder_number, current_bidder in enumerate(bidder_agents):
             if current_bidder.can_bid:
                 current_bidder.read_win_notice(cost=pay_price, click=click)
+
+                if counter % 100 == 0:
+                    print(f"Iteration n {counter}, bidder n {bidder_number}")
+        counter += 1
 
     now = datetime.datetime.now()
     name = 'new_train_' + str(now)
