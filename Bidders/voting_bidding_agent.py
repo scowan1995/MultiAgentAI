@@ -77,8 +77,8 @@ class EnsembleBiddingAgent(BasicBiddingAgent):
 
 
 def get_training_set():
-    data_path = os.path.abspath(os.pardir + "/MultiAgentAI/Data/train_small.csv")
-    test_path = os.path.abspath(os.pardir + "/MultiAgentAI/Data/test_small.csv")
+    data_path = os.path.abspath(os.pardir + "/MultiAgentAI/Data/train.csv")
+    test_path = os.path.abspath(os.pardir + "/MultiAgentAI/Data/test.csv")
     val_path = os.path.abspath(os.pardir + "/MultiAgentAI/Data/validation.csv")
     train = pd.read_csv(data_path, na_values=["Na", "null"]).fillna(0)
     test = pd.read_csv(test_path, na_values=["Na", "null"]).fillna(0)
