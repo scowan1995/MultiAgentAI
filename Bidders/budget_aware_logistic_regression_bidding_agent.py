@@ -103,13 +103,15 @@ class BudgetAwareLogisticRegressionBiddingAgent(BasicBiddingAgent):
 
         if plot:
             plot_distribution(market_price, x_gamma, y_gamma, "marketprice_distribution")
+            plt.show()
+        return self._fitted_marketprice_distribution, min_market_price, max_market_price
 
     def fit_marketprice_log_normal_distribution(self, training_set, plot=True):
         market_price = np.asarray(training_set.data_targets['payprice'])
         min_market_price = training_set.data_targets['payprice'].min()
         max_market_price = training_set.data_targets['payprice'].max()
 
-        sigma, loc, scale = stats.lognorm.fit(market_price)
+        sigma, loc, scale = stats.lognorm.fit(market_price, 1.6)
         self._fitted_marketprice_distribution = lambda x: stats.lognorm.pdf(x=x, s=sigma, loc=loc, scale=scale)
 
         x_lognorm = np.linspace(min_market_price, max_market_price, 100)
@@ -117,9 +119,8 @@ class BudgetAwareLogisticRegressionBiddingAgent(BasicBiddingAgent):
 
         if plot:
             plot_distribution(market_price, x_lognorm, y_lognorm, "marketprice_distribution")
+            plt.show()
         return self._fitted_marketprice_distribution, min_market_price, max_market_price
-
-        return self._fitted_gamma_marketprice
 
     def get_marketprice_upperbound(self):
         return self._price_market_upper_bound
@@ -135,8 +136,6 @@ class BudgetAwareLogisticRegressionBiddingAgent(BasicBiddingAgent):
 
     def set_features_to_drop(self, drop):
         self._features_to_drop = drop
-
-        self._fitted_gamma_marketprice = distribution
 
     def set_marketprice_upperbound(self, bound):
         self._price_market_upper_bound = bound
