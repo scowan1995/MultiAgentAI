@@ -41,7 +41,7 @@ class LinearRegressionBidder:
                     clicks += 1
         local_prob = min_prob
         more_clicks = [0]
-        while budget > 100 and local_prob > 0:
+        while budget > 100 and local_prob > 0.001:
             print(
                 budget,
                 "leftover when using multiplier:",
@@ -49,7 +49,7 @@ class LinearRegressionBidder:
                 "and min prob:",
                 local_prob,
                 ". Continuing with min prob",
-                str(local_prob * 0.9),
+                str(local_prob * 0.8),
             )
             c, p, b = self.test(
                 local_prob * 0.9, multiplier, budget, max_prob=local_prob
@@ -67,7 +67,7 @@ class LinearRegressionBidder:
                         + " , "
                         + str(min_prob)
                         + " , "
-                        + str(multiplier)
+                        + str(multiplier) + "\n"
                     )
                 )
             # print("total clicks", clicks + sum(more_clicks))
@@ -96,17 +96,17 @@ if __name__ == "__main__":
     lb.train()
     print("testing")
     initial_budget = 6250 * 1000
-    range_probs = np.random.uniform(0.0001, 0.90, size=100)
-    pay_muls = np.append(np.random.uniform(0.5, 5, size=35), 1)
+    range_probs = np.random.uniform(0.0001, 0.90, size=40)
+    pay_muls = np.append(np.random.uniform(0.5, 3, size=12), 1)
     i = 0
-    total = 35 * 100
+    total = 40 * 12
     best = 0
     best_bound = 0
     best_mul = 0
     final_budg = 0
     start = datetime.now()
     with open("results.csv", "w") as f:
-        f.write("click, budget, min_prob, multiplier")
+        f.write("click, budget, min_prob, multiplier \n")
     for multiplier in pay_muls:
         for prob in range_probs:
             i += 1
