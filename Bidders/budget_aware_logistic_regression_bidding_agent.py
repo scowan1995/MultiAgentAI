@@ -90,6 +90,25 @@ class BudgetAwareLogisticRegressionBiddingAgent(BasicBiddingAgent):
         # max_bidprice = training_set.data_targets.loc[lambda x: x["click"] == 1, "payprice"]
         self._price_market_upper_bound = max_payprice  # + epsilon
 
+    def infer_win_probability(self):
+        win_flag = False
+        # assuming that marketprice is uniformly distributed
+        l = self._price_market_upper_bound
+        cost = self._bid_value**2 / (2 * l)
+        win_probability = self._bid_value / self._price_market_upper_bound
+        # if self._bid_value > cost:
+        if win_probability > 0.41:
+            # Bidder wins the auction
+            win_flag = True
+            self._bids_won += 1
+            # Bidder has to pay impression
+            self._total_paid += cost
+            self._current_budget -= cost
+            if self._current_budget <= 0:
+                # Bidder finishes budget and can't bid anymore
+                self.can_bid = False
+        return win_flag
+
     def fit_marketprice_gamma_distribution(self, training_set, plot=True):
         market_price = np.asarray(training_set.data_targets['payprice'])
         min_market_price = training_set.data_targets['payprice'].min()
