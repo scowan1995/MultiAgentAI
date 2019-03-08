@@ -109,8 +109,8 @@ class BudgetAwareLogisticRegressionBiddingAgent(BasicBiddingAgent):
         min_market_price = training_set.data_targets['payprice'].min()
         max_market_price = training_set.data_targets['payprice'].max()
 
-        shape, loc, scale = stats.lognorm.fit(market_price)
-        self._fitted_marketprice_distribution = lambda x: stats.lognorm.pdf(x=x, a=shape, loc=loc, scale=scale)
+        sigma, loc, scale = stats.lognorm.fit(market_price)
+        self._fitted_marketprice_distribution = lambda x: stats.lognorm.pdf(x=x, s=sigma, loc=loc, scale=scale)
 
         x_lognorm = np.linspace(min_market_price, max_market_price, 100)
         y_lognorm = self._fitted_marketprice_distribution(x_lognorm)
