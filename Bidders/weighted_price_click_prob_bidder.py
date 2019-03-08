@@ -3,6 +3,7 @@ import pandas as pd
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.utils import shuffle
+from datetime import datetime
 
 
 class LinearRegressionBidder:
@@ -22,26 +23,58 @@ class LinearRegressionBidder:
     def train(self):
         return self.model.fit(self.trainx, self.trainy)
 
-    def test(self, min_prob, multiplier):
-        budget = 6520 * 1000
+    def test(self, min_prob, multiplier, budget, max_prob=None):
         # print("model score:", self.model.score(self.testx, self.testy))
         predictions = self.model.predict(self.testx)
         predictions *= multiplier
         clicks = 0
         for i in range(predictions.shape[0]):
-            if predictions[i] >= self.testy.iloc[i] and (
-                self.testx["click_prob"].iloc[i] > min_prob
+            if (
+                predictions[i] >= self.testy.iloc[i]
+                and (self.testx["click_prob"].iloc[i] > min_prob)
+                and (max_prob is None or max_prob > self.testx["click_prob"].iloc[i])
             ):
                 budget -= self.testy.iloc[i]
                 if budget < 0:
                     break
                 if self.test_clicks.iloc[i] > 0:
                     clicks += 1
-        print("total clicks", clicks)
-        print("have budget", budget)
-        print("using min", min_prob)
-        print("using mul", multiplier)
-        return clicks, min_prob
+        local_prob = min_prob
+        more_clicks = [0]
+        while budget > 100 and local_prob > 0:
+            print(
+                budget,
+                "leftover when using multiplier:",
+                multiplier,
+                "and min prob:",
+                local_prob,
+                ". Continuing with min prob",
+                str(local_prob * 0.9),
+            )
+            c, p, b = self.test(
+                local_prob * 0.9, multiplier, budget, max_prob=local_prob
+            )
+            local_prob = p
+            budget = b
+            more_clicks.append(c)
+        if max_prob is None:
+            with open("results.csv", "a") as f:
+                f.write(
+                    str(
+                        str(clicks)
+                        + " , "
+                        + str(budget)
+                        + " , "
+                        + str(min_prob)
+                        + " , "
+                        + str(multiplier)
+                    )
+                )
+            # print("total clicks", clicks + sum(more_clicks))
+            # print("have budget", budget)
+            # print("using min", min_prob)
+            # print("using mul", multiplier)
+        return clicks, min_prob, budget
 
     def get_data(self):
         train = pd.read_csv("Data/saved/Train_modelled.csv")
@@ -62,17 +95,44 @@ if __name__ == "__main__":
     print("training")
     lb.train()
     print("testing")
-    range_probs = np.random.uniform(0.0001, 0.95, size=100)
+    initial_budget = 6250 * 1000
+    range_probs = np.random.uniform(0.0001, 0.90, size=100)
     pay_muls = np.append(np.random.uniform(0.5, 5, size=35), 1)
+    i = 0
+    total = 35 * 100
     best = 0
     best_bound = 0
     best_mul = 0
+    final_budg = 0
+    start = datetime.now()
+    with open("results.csv", "w") as f:
+        f.write("click, budget, min_prob, multiplier")
     for multiplier in pay_muls:
         for prob in range_probs:
-            clicks, bound = lb.test(prob, multiplier)
+            i += 1
+            clicks, bound, budget = lb.test(prob, multiplier, initial_budget)
             if clicks > best:
                 best_mul = multiplier
                 best = clicks
                 best_bound = bound
-    print("Best =", best, "with bound", best_bound, "and best multiplier", best_mul)
+                final_budg = budget
+            if i % 10 == 0:
+                print(str(i * 100 / total), "% way through")
+                print("best click", best)
+                print(
+                    "its been ",
+                    datetime.now() - start,
+                    " hours, mins, seconds since hyper param tuning began",
+                )
+    print(
+        "Best =",
+        best,
+        "with bound",
+        best_bound,
+        "and best multiplier",
+        best_mul,
+        "with",
+        final_budg,
+        "remaining",
+    )
 
