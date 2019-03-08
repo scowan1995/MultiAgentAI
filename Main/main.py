@@ -83,11 +83,29 @@ def main():
         print(logistic_regression.score)
 
     if configs['budget_aware_logistic_regression']:
+        rtb = RtbAdExchange(sets['val'])
         log_reg_bidder = BudgetAwareLogisticRegressionBiddingAgent(training_set=sets['train'],
+                                                                   additional_set=sets['test'],
                                                                    initial_budget=bidder_budget)
-        log_reg_bidder.set_campaign_duration_from_set(sets['val'])
-        log_reg_bidder.fit_marketprice_gamma_distribution(sets['train'])
-        single_agent_interact_with_rtb(log_reg_bidder, rtb, sets, print_results=True)
+        log_reg_bidder.set_campaign_duration_from_set(sets['test'])
+
+        # For plotting only, then choose one!
+        # gamma_train, min_x, max_x = log_reg_bidder.fit_marketprice_gamma_distribution(sets['train'], plot=False)
+        # lognorm_train, _, _ = log_reg_bidder.fit_marketprice_log_normal_distribution(sets['train'], plot=False)
+        #
+        # gamma_val, min_x_val, max_x_val = log_reg_bidder.fit_marketprice_gamma_distribution(sets['val'], plot=False)
+        # lognorm_val, _, _ = log_reg_bidder.fit_marketprice_log_normal_distribution(sets['val'], plot=False)
+        #
+        # market_prices = [np.asarray(sets['train'].data_targets['payprice']),
+        #                  np.asarray(sets['val'].data_targets['payprice'])]
+        # functions_range = np.linspace(min(min_x, min_x_val), max(max_x, max_x_val), 100)
+        # functions = [gamma_train(functions_range), lognorm_train(functions_range),
+        #              gamma_val(functions_range), lognorm_val(functions_range)]
+        # plot_multiple_functions_and_distributions(functions_range, functions, market_prices, "distributions1")
+
+        # For validation, train or mock
+        # single_agent_interact_with_rtb(log_reg_bidder, rtb, sets, print_results=True)
+
         # For testing
         single_agent_interact_with_rtb_for_testing(log_reg_bidder, rtb, sets, print_results=True)
         rtb.generate_submission_file()

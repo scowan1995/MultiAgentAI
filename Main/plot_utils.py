@@ -59,3 +59,13 @@ def plot_distribution(vector, x_distribution, y_distribution, name):
     figure = distribution_plot.get_figure()
     path = "../Plots/" + name + ".svg"
     figure.savefig(path, transparent=True, format='svg', frameon=False)
+
+
+def plot_multiple_functions_and_distributions(x_range, functions, distributions, name):
+    figure = plt.figure()
+    for dist in distributions:
+        seaborn.distplot(dist)
+    for func in functions:
+        plt.plot(x_range, func)
+    path = "../Plots/" + name + ".svg"
+    figure.savefig(path, transparent=True, format='svg', frameon=False)
