@@ -1,4 +1,6 @@
 import os
+import datetime
+import pandas as pd
 
 from Preprocessing import single_set
 
@@ -41,23 +43,32 @@ class RtbAdExchange:
 
     def report_win_notice(self):
         number_of_bids = len(self._bids)
-        assert number_of_bids > 0
 
         if number_of_bids > 1:
             self._bids.sort()
             # update the cost with second highest bid (we are in a second price auction)
             self._cost = self._bids[-2]
 
-            # insert payprice and bidprice in the new set
-            if self._new_set is not None:
-                self._new_set.loc[
-                    self._new_set.index[self._row_counter], 'payprice'] = self._cost
-                self._new_set.loc[
-                    self._new_set.index[self._row_counter], 'bidprice'] = self._bids[-1]
-                self._row_counter += 1
+        # insert payprice and bidprice in the new set
+        if self._new_set is not None:
+            self._new_set.loc[
+                self._new_set.index[self._row_counter], 'payprice'] = self._cost
+            self._new_set.loc[
+                self._new_set.index[self._row_counter], 'bidprice'] = self._bids[-1]
+            self._row_counter += 1
+
+            self._bids = []
 
         return self._cost, self._click
 
     def retrieve_new_set_after_auction(self, set_name):
         path = "Data/" + set_name + "0000"
         return single_set.SingleSet(relative_path=path, data=self._new_set)
+
+    def generate_submission_file(self):
+        submission_df = pd.DataFrame({'bidid': self._new_set['bidid'], 'bidprice': self._new_set['bidprice']})
+        now = datetime.datetime.now()
+        absolute_path = os.path.abspath(__file__ + "/../../Data/test_submission_" + str(now) + ".csv")
+        # Group Token: QQri5ISZz4Kn
+        submission_df.to_csv(absolute_path, index=False)
+

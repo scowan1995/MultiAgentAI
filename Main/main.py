@@ -88,6 +88,9 @@ def main():
         log_reg_bidder.set_campaign_duration_from_set(sets['val'])
         log_reg_bidder.fit_marketprice_gamma_distribution(sets['train'])
         single_agent_interact_with_rtb(log_reg_bidder, rtb, sets, print_results=True)
+        # For testing
+        single_agent_interact_with_rtb_for_testing(log_reg_bidder, rtb, sets, print_results=True)
+        rtb.generate_submission_file()
 
     if configs['multiple_budget_aware']:
         rtb = RtbAdExchange(sets['val'])
