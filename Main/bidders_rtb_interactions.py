@@ -139,7 +139,7 @@ def multiagent_bidders_interact_with_rtb_to_generate_new_set(bidder_agents, rtb,
 
         for bidder_number, current_bidder in enumerate(bidder_agents):
             if current_bidder.can_bid:
-                noise = np.random.normal(loc=10, scale=5, size=1)  # TODO: find a smarter way!
+                noise = np.random.normal(loc=0, scale=20, size=1)  # TODO: find a smarter way!
                 bid_value = current_bidder.bid(features_row) + noise
                 rtb.receive_new_bid(bid_value)
 
