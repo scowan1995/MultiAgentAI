@@ -30,6 +30,7 @@ class BudgetAwareLogisticRegressionBiddingAgent(BasicBiddingAgent):
         self._train_click_probability_predictor(training_set)
         if self._set_to_predict is not None:
             self._compute_all_set_click_probabilities_at_once()
+            # plot_multiple_distributions([self._click_predictions[:, 1]], "click_predictions_logist_reg")
 
     def _process_bid_request(self, ad_user_auction_info=None):
         current_features = SingleSet.drop_features_from_single_row(ad_user_auction_info,
@@ -109,10 +110,12 @@ class BudgetAwareLogisticRegressionBiddingAgent(BasicBiddingAgent):
                 self.can_bid = False
         return win_flag
 
-    def fit_marketprice_gamma_distribution(self, training_set, plot=True):
-        market_price = np.asarray(training_set.data_targets['payprice'])
-        min_market_price = training_set.data_targets['payprice'].min()
-        max_market_price = training_set.data_targets['payprice'].max()
+    def fit_marketprice_gamma_distribution(self, training_set, plot=True, outlier_threshold=None):
+        market_price = np.asarray(training_set.data['payprice'])
+        if outlier_threshold is not None:
+            market_price = market_price[market_price < outlier_threshold]
+        min_market_price = training_set.data['payprice'].min()
+        max_market_price = training_set.data['payprice'].max()
 
         shape, loc, scale = stats.gamma.fit(market_price)
         self._fitted_marketprice_distribution = lambda x: stats.gamma.pdf(x=x, a=shape, loc=loc, scale=scale)
@@ -125,12 +128,14 @@ class BudgetAwareLogisticRegressionBiddingAgent(BasicBiddingAgent):
             plt.show()
         return self._fitted_marketprice_distribution, min_market_price, max_market_price
 
-    def fit_marketprice_log_normal_distribution(self, training_set, plot=True):
-        market_price = np.asarray(training_set.data_targets['payprice'])
-        min_market_price = training_set.data_targets['payprice'].min()
-        max_market_price = training_set.data_targets['payprice'].max()
+    def fit_marketprice_log_normal_distribution(self, training_set, plot=True, outlier_threshold=None):
+        market_price = np.asarray(training_set.data['payprice'])
+        if outlier_threshold is not None:
+            market_price = market_price[market_price < outlier_threshold]
+        min_market_price = training_set.data['payprice'].min()
+        max_market_price = training_set.data['payprice'].max()
 
-        sigma, loc, scale = stats.lognorm.fit(market_price, 1.6)
+        sigma, loc, scale = stats.lognorm.fit(market_price, 10.6)
         self._fitted_marketprice_distribution = lambda x: stats.lognorm.pdf(x=x, s=sigma, loc=loc, scale=scale)
 
         x_lognorm = np.linspace(min_market_price, max_market_price, 100)
