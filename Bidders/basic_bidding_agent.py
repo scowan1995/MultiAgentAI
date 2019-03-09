@@ -1,5 +1,5 @@
 class BasicBiddingAgent:
-    def __init__(self, training_set, initial_budget):
+    def __init__(self, training_set, initial_budget, train_flag=True):
         self._current_budget = initial_budget
         self._current_slot_price = None
         self._bid_value = 0
@@ -11,7 +11,8 @@ class BasicBiddingAgent:
         self._bids_won = 0
         self._placed_bids = 0
 
-        self._train(training_set)
+        if train_flag:
+            self._train(training_set)
 
     def get_current_bid_value(self):
         return self._bid_value

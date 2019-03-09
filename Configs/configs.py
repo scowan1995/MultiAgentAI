@@ -21,7 +21,7 @@ def make_statics_configs():
         # --- Dataset and Loading ---
 
         # which files to load
-        'sets': {'mock': True, 'train': False, 'val': False, 'test': False},
+        'sets': {'mock': False, 'train': True, 'val': True, 'test': True},
 
         # combine files?
         'combine_train_val': False,
@@ -42,7 +42,7 @@ def make_statics_configs():
 
         'constant_bidding': False,
         'random_bidding': False,
-        'multiple_random_bidding': True,
+        'multiple_random_bidding': False,
 
 
         # --- Logistic Regression ---
@@ -53,6 +53,13 @@ def make_statics_configs():
 
         # --- Neural Network ---
 
+        # --- Multi Agent ---
+        'budget_aware_logistic_regression': False,
+        'multiple_budget_aware': False,
+
+
+        # --- Fitting Experiments ---
+        'try_to_fit_marketprice_distributions': True,
     }
 
     return statics, configs

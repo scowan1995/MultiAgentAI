@@ -83,10 +83,75 @@ def main():
         print(logistic_regression.score)
 
     if configs['budget_aware_logistic_regression']:
+        rtb = RtbAdExchange(sets['test'])
         log_reg_bidder = BudgetAwareLogisticRegressionBiddingAgent(training_set=sets['train'],
+                                                                   additional_set=sets['test'],
                                                                    initial_budget=bidder_budget)
-        log_reg_bidder.set_campaign_duration_from_set(sets['val'])
-        single_agent_interact_with_rtb(log_reg_bidder, rtb, sets, print_results=True)
+        log_reg_bidder.set_campaign_duration_from_set(sets['test'])
+
+        # For plotting only, then choose one!
+        # gamma_train, min_x, max_x = log_reg_bidder.fit_marketprice_gamma_distribution(sets['train'], plot=False)
+        # lognorm_train, _, _ = log_reg_bidder.fit_marketprice_log_normal_distribution(sets['train'], plot=False)
+        #
+        # gamma_val, min_x_val, max_x_val = log_reg_bidder.fit_marketprice_gamma_distribution(sets['val'], plot=False)
+        # lognorm_val, _, _ = log_reg_bidder.fit_marketprice_log_normal_distribution(sets['val'], plot=False)
+        #
+        # market_prices = [np.asarray(sets['train'].data_targets['payprice']),
+        #                  np.asarray(sets['val'].data_targets['payprice'])]
+        # functions_range = np.linspace(min(min_x, min_x_val), max(max_x, max_x_val), 100)
+        # functions = [gamma_train(functions_range), lognorm_train(functions_range),
+        #              gamma_val(functions_range), lognorm_val(functions_range)]
+        # plot_multiple_functions_and_distributions(functions_range, functions, market_prices, "distributions1")
+
+        # For validation, train or mock
+        # single_agent_interact_with_rtb(log_reg_bidder, rtb, sets, print_results=True)
+
+        # For testing
+        single_agent_interact_with_rtb_for_testing(log_reg_bidder, rtb, sets, print_results=True)
+        rtb.generate_submission_file()
+
+    if configs['multiple_budget_aware']:
+        rtb = RtbAdExchange(sets['val'])
+        total_bidders = 20
+        first_bidder = BudgetAwareLogisticRegressionBiddingAgent(training_set=sets['val'],
+                                                                 additional_set=sets['val'],
+                                                                 initial_budget=bidder_budget)
+        first_bidder.set_campaign_duration_from_set(sets['val'])
+
+        bidders = [first_bidder]
+        for i in range(total_bidders):
+            log_reg_bidder = BudgetAwareLogisticRegressionBiddingAgent(training_set=sets['val'],
+                                                                       additional_set=sets['val'],
+                                                                       initial_budget=bidder_budget,
+                                                                       train_flag=False)
+            log_reg_bidder.set_logistic_regressor(first_bidder.get_trained_logistic_regressor())
+            log_reg_bidder.set_marketprice_upperbound(first_bidder.get_marketprice_upperbound())
+            log_reg_bidder.set_campaign_duration_from_set(sets['val'])
+            log_reg_bidder.set_click_predictions(first_bidder.get_click_predictions())
+            # log_reg_bidder.fit_and_show_marketprice_gamma_distribution(sets['train'], plot=False)
+            bidders.append(log_reg_bidder)
+        multiagent_bidders_interact_with_rtb_to_generate_new_set(bidders, rtb, sets)
+        print("new dataset created")
+
+    if configs['try_to_fit_marketprice_distributions']:
+        # Explore marketprice distributions
+        new_validation = SingleSet(relative_path='/Data/new_validation_1.csv',
+                                   use_numerical_labels=True)
+        outlier_threshold = 600
+        log_reg_bidder = BudgetAwareLogisticRegressionBiddingAgent(training_set=sets['train'],
+                                                                   additional_set=sets['test'],
+                                                                   initial_budget=bidder_budget,
+                                                                   train_flag=True)
+
+        gamma_old, min_x, max_x = log_reg_bidder.fit_marketprice_gamma_distribution(sets['val'], plot=False)
+        lognorm_old, _, _ = log_reg_bidder.fit_marketprice_log_normal_distribution(sets['val'], plot=False)
+
+        new_payprices = np.asarray(new_validation.data['payprice'])
+        market_prices = [np.asarray(sets['val'].data_targets['payprice']),
+                         new_payprices[new_payprices < outlier_threshold]]
+        functions_range = np.linspace(min_x, max_x, 100)
+        functions = [gamma_old(functions_range), lognorm_old(functions_range)]
+        plot_multiple_functions_and_distributions(functions_range, functions, market_prices, "fitted_distributions_3")
 
 
 if __name__ == "__main__":

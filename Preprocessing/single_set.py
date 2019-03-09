@@ -16,21 +16,28 @@ class SingleSet(object):
         self.data_targets = None
         self.label_to_numerical_mapping = None
 
-        if relative_path is not None:
+        assert relative_path is not None
+
+        if data is not None:
+            self._generation_procedure(relative_path, use_numerical_labels)
+        else:
             try:
                 self.load_pickle(relative_path)
             except FileNotFoundError:
                 self.load_data(relative_path)
-                self.data_features = self.data
+                self._generation_procedure(relative_path, use_numerical_labels)
 
-                if use_numerical_labels:
-                    # it has to be executed before the splitting
-                    self.numericalize_labels()
+        print("-- data loaded --")
 
-                self.split_in_feature_and_target()
-                self.save_pickle(relative_path)
+    def _generation_procedure(self, relative_path, use_numerical_labels):
+        self.data_features = self.data
 
-            print("-- data loaded --")
+        if use_numerical_labels:
+            # it has to be executed before the splitting
+            self.numericalize_labels()
+
+        self.split_in_feature_and_target()
+        self.save_pickle(relative_path)
 
     def load_data(self, dataset_rel_path):
         """
