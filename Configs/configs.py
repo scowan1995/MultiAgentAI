@@ -21,7 +21,7 @@ def make_statics_configs():
         # --- Dataset and Loading ---
 
         # which files to load
-        'sets': {'mock': False, 'train': True, 'val': True, 'test': False},
+        'sets': {'mock': False, 'train': True, 'val': True, 'test': True},
 
         # combine files?
         'combine_train_val': False,
@@ -55,8 +55,11 @@ def make_statics_configs():
 
         # --- Multi Agent ---
         'budget_aware_logistic_regression': False,
-        'multiple_budget_aware': True,
+        'multiple_budget_aware': False,
 
+
+        # --- Fitting Experiments ---
+        'try_to_fit_marketprice_distributions': True,
     }
 
     return statics, configs
