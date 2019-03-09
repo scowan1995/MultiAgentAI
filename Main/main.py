@@ -83,7 +83,7 @@ def main():
         print(logistic_regression.score)
 
     if configs['budget_aware_logistic_regression']:
-        rtb = RtbAdExchange(sets['val'])
+        rtb = RtbAdExchange(sets['test'])
         log_reg_bidder = BudgetAwareLogisticRegressionBiddingAgent(training_set=sets['train'],
                                                                    additional_set=sets['test'],
                                                                    initial_budget=bidder_budget)
@@ -132,6 +132,26 @@ def main():
             bidders.append(log_reg_bidder)
         multiagent_bidders_interact_with_rtb_to_generate_new_set(bidders, rtb, sets)
         print("new dataset created")
+
+    if configs['try_to_fit_marketprice_distributions']:
+        # Explore marketprice distributions
+        new_validation = SingleSet(relative_path='/Data/new_validation_1.csv',
+                                   use_numerical_labels=True)
+        outlier_threshold = 600
+        log_reg_bidder = BudgetAwareLogisticRegressionBiddingAgent(training_set=sets['train'],
+                                                                   additional_set=sets['test'],
+                                                                   initial_budget=bidder_budget,
+                                                                   train_flag=True)
+
+        gamma_old, min_x, max_x = log_reg_bidder.fit_marketprice_gamma_distribution(sets['val'], plot=False)
+        lognorm_old, _, _ = log_reg_bidder.fit_marketprice_log_normal_distribution(sets['val'], plot=False)
+
+        new_payprices = np.asarray(new_validation.data['payprice'])
+        market_prices = [np.asarray(sets['val'].data_targets['payprice']),
+                         new_payprices[new_payprices < outlier_threshold]]
+        functions_range = np.linspace(min_x, max_x, 100)
+        functions = [gamma_old(functions_range), lognorm_old(functions_range)]
+        plot_multiple_functions_and_distributions(functions_range, functions, market_prices, "fitted_distributions_3")
 
 
 if __name__ == "__main__":
