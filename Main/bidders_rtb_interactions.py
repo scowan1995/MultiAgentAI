@@ -39,13 +39,14 @@ def single_agent_interact_with_rtb(bidder, rtb, sets, print_results=False):
 
 
 def single_agent_interact_with_rtb_for_testing(bidder, rtb, sets, print_results=False):
-    counter = 0
-    for _, features_row in sets['test'].get_feature_iterator():
+    for counter, features_row in sets['test'].get_feature_iterator():
 
         # agent bids evaluating info received from RTB ad exchange and DMP
         if bidder.can_bid:
             bid_value = bidder.bid(ad_user_auction_info=features_row)
             rtb.receive_new_bid(bid_value)
+        else:
+            rtb.receive_new_bid(bidder_bid=0)
 
         rtb.report_win_notice()
 
@@ -57,7 +58,6 @@ def single_agent_interact_with_rtb_for_testing(bidder, rtb, sets, print_results=
             if counter % 1000 == 0:
                 print(f"Iteration n {counter}. Bids won = {bidder.get_bids_won()}. "
                       f"Clicks = {bidder.clicks_obtained}. Budget = {bidder.get_current_budget()}")
-        counter += 1
 
     if print_results:
         print(f"Final budget = {bidder.get_current_budget()}. "
