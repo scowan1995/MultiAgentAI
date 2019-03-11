@@ -11,7 +11,7 @@ class ConstantBiddingAgent(BasicBiddingAgent):
         self._bid_value = 277
         pass
 
-    def _bidding_function(self, utility=None, cost=None):
+    def _bidding_function(self):
         """Deploy the learned bidding model"""
         return self._bid_value
 

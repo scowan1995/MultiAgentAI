@@ -2,7 +2,7 @@ import sys
 import os
 import pandas as pd
 import pickle
-from Configs.configs import statics, configs
+from Configs.configs import configs
 from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 
 sys.path.append("../../")
@@ -16,21 +16,28 @@ class SingleSet(object):
         self.data_targets = None
         self.label_to_numerical_mapping = None
 
-        if relative_path is not None:
+        assert relative_path is not None
+
+        if data is not None:
+            self._generation_procedure(relative_path, use_numerical_labels)
+        else:
             try:
                 self.load_pickle(relative_path)
             except FileNotFoundError:
                 self.load_data(relative_path)
-                self.data_features = self.data
+                self._generation_procedure(relative_path, use_numerical_labels)
 
-                if use_numerical_labels:
-                    # it has to be executed before the splitting
-                    self.numericalize_labels()
+        print("-- data loaded --")
 
-                self.split_in_feature_and_target()
-                self.save_pickle(relative_path)
+    def _generation_procedure(self, relative_path, use_numerical_labels):
+        self.data_features = self.data
 
-            print("-- data loaded --")
+        if use_numerical_labels:
+            # it has to be executed before the splitting
+            self.numericalize_labels()
+
+        self.split_in_feature_and_target()
+        self.save_pickle(relative_path)
 
     def load_data(self, dataset_rel_path):
         """
@@ -93,13 +100,13 @@ class SingleSet(object):
 
     def numericalize_labels(self):
         """
-        numericalizes categorical columns in pandas dataframe
+        numericalize categorical columns in pandas dataframe
         """
         le = LabelEncoder()
         le_mapping = dict()
         data = self.data.copy()
         for col in data.columns.values:
-            #print("numericalizing", col)
+            # print("numericalizing", col)
             # Encoding only categorical variables
             if data[col].dtypes == "object":
                 # Using whole data to form an exhaustive list of levels
@@ -111,6 +118,21 @@ class SingleSet(object):
                 le_mapping[col] = dict(zip(le.classes_, le.transform(le.classes_)))
         self.data_features = data
         self.label_to_numerical_mapping = le_mapping
+
+    def drop_features(self, features_to_drop):
+        remained_features = self.data_features.copy()
+        for feature_name in features_to_drop:
+            if feature_name in remained_features:
+                remained_features.drop(feature_name, axis=1, inplace=True)
+        return remained_features
+
+    @staticmethod
+    def drop_features_from_single_row(row, features_to_drop):
+        remained_features = row.copy()
+        for feature_name in features_to_drop:
+            if feature_name in remained_features:
+                remained_features.drop(feature_name, inplace=True)
+        return remained_features
 
     def scale(self):
         """

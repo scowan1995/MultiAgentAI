@@ -5,8 +5,8 @@ import os
 configs: List of configs the user mainly interacts with, such as hyperparameters, choosing the dataset etc.
 """
 
-def make_statics_configs():
 
+def make_statics_configs():
     statics = {
 
         'local_or_server': 'local',  # 'local' OR 'server'
@@ -16,16 +16,14 @@ def make_statics_configs():
 
     }
 
-
-
     configs = {
 
         # --- Dataset and Loading ---
 
         # which files to load
-        'sets': {'mock': True, 'train': False, 'val': False, 'test': False},
+        'sets': {'mock': False, 'train': True, 'val': True, 'test': True},
 
-        #combine files?
+        # combine files?
         'combine_train_val': False,
         # load train_val pickle?
         'load_pickle': True,    # load full train and val set, but pickled and preprocessed version
@@ -42,8 +40,9 @@ def make_statics_configs():
 
         # --- Basic Bidding ---
 
-        'constant_bidding': True,
-        'random_bidding': True,
+        'constant_bidding': False,
+        'random_bidding': False,
+        'multiple_random_bidding': False,
 
 
         # --- Logistic Regression ---
@@ -54,17 +53,23 @@ def make_statics_configs():
 
         # --- Neural Network ---
 
+        # --- Multi Agent ---
+        'budget_aware_logistic_regression': False,
+        'multiple_budget_aware': False,
+
+
+        # --- Fitting Experiments ---
+        'try_to_fit_marketprice_distributions': True,
     }
 
     return statics, configs
 
 
-
-
 def configure_gpu(configs):
 
     os.environ['KERAS_BACKEND'] = 'tensorflow'  # 'theano' or 'tensorflow
-    os.environ["THEANO_FLAGS"] = 'mode=FAST_RUN,device=' + 'gpu' + str(configs['gpu_no']) + ',floatX=float32,force_device=True'
+    os.environ["THEANO_FLAGS"] = 'mode=FAST_RUN,device=' + 'gpu' + str(configs['gpu_no']) + \
+                                 ',floatX=float32,force_device=True'
     os.environ['CUDA_VISIBLE_DEVICES'] = str(configs['gpu_no'])
 
 

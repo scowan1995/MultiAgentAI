@@ -1,5 +1,5 @@
 class BasicBiddingAgent:
-    def __init__(self, training_set, initial_budget):
+    def __init__(self, training_set, initial_budget, train_flag=True):
         self._current_budget = initial_budget
         self._current_slot_price = None
         self._bid_value = 0
@@ -9,8 +9,10 @@ class BasicBiddingAgent:
         self.clicks_obtained = 0
         self._total_paid = 0
         self._bids_won = 0
+        self._placed_bids = 0
 
-        self._train(training_set)
+        if train_flag:
+            self._train(training_set)
 
     def get_current_bid_value(self):
         return self._bid_value
@@ -30,8 +32,15 @@ class BasicBiddingAgent:
             cpc = self._total_paid / self.clicks_obtained
         return cpc
 
+    def get_bids_won(self):
+        return self._bids_won
+
+    def get_total_paied(self):
+        return self._total_paid
+
     def bid(self, ad_user_auction_info=None):
         """Receive a bid request and return the bid"""
+        self._placed_bids += 1
         self._process_bid_request(ad_user_auction_info)
         # if bidder doesn't have money to place the bid he would like,
         # it still try to bid all the remained budget hoping in good luck
@@ -49,6 +58,7 @@ class BasicBiddingAgent:
             cost: amount payed for the ad. Since we use a second price auction this value is not the
                 same as our bid value (It is the second highest bid value)
                 This value is updated by the RTB Ad exchange.
+                There should be only one Bid above the cost computed by the RTB, the winner bid.
             click: flag that is True when the user clicked on the ad => agent has to pay for the
                 impression
         :return True if it wins
@@ -86,6 +96,6 @@ class BasicBiddingAgent:
         self._current_slot_price = ad_user_auction_info['slotprice']
         self._bid_value = self._bidding_function()
 
-    def _bidding_function(self, utility=None, cost=None):
+    def _bidding_function(self):
         """Deploy the learned bidding model"""
         raise NotImplementedError
